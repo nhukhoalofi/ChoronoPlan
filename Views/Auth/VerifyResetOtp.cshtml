@@ -1,0 +1,47 @@
+﻿@model VerifyOtpViewModel
+
+@{
+    Layout = "_AuthSplitLayout";
+    ViewBag.Title = "Verify Reset OTP";
+}
+
+<div class="space-y-2">
+    <h2 class="text-white font-display-date text-3xl tracking-tight">
+        Verify Reset OTP
+    </h2>
+
+    <p class="text-on-surface-variant font-body-md">
+        Enter the 6-digit OTP sent to your Gmail to continue resetting your password.
+    </p>
+</div>
+
+<form asp-controller="Auth" asp-action="VerifyResetOtp" method="post" class="space-y-6">
+    @Html.AntiForgeryToken()
+
+    <input asp-for="Email" type="hidden" />
+
+    <div asp-validation-summary="ModelOnly" class="text-error text-sm"></div>
+
+    <div class="space-y-1.5">
+        <label asp-for="Otp" class="font-label-caps text-on-surface-variant uppercase">
+            OTP Code
+        </label>
+
+        <input asp-for="Otp"
+               maxlength="6"
+               class="w-full h-12 bg-[#303134] border border-[#3C4043] rounded-lg px-4 text-white placeholder:text-outline focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-all font-body-md tracking-[10px] text-center"
+               placeholder="000000" />
+
+        <span asp-validation-for="Otp" class="text-error text-sm"></span>
+    </div>
+
+    <button class="w-full h-12 bg-primary-container hover:bg-opacity-90 active:opacity-80 text-white font-headline-sm rounded-lg flex items-center justify-center gap-2 transition-all cursor-pointer shadow-lg shadow-primary-container/10"
+            type="submit">
+        <span>Continue</span>
+        <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+    </button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

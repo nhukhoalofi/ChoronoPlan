@@ -1,0 +1,829 @@
+﻿@model CalendarPageViewModel
+
+@{
+    Layout = null;
+    ViewBag.Title = "Calendar Dashboard";
+
+    var miniCalendarStart = new DateTime(Model.WeekStart.Year, Model.WeekStart.Month, 1);
+    var miniStartOffset = (int)miniCalendarStart.DayOfWeek;
+    var miniGridStart = miniCalendarStart.AddDays(-miniStartOffset);
+    var todayWeekStart = DateTime.Today.AddDays(-(((int)DateTime.Today.DayOfWeek + 6) % 7));
+}
+
+<!DOCTYPE html>
+
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #131313;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #131313;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #3c4043;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4f5256;
+        }
+
+        .calendar-cell:hover {
+            background-color: rgba(26, 115, 232, 0.08);
+        }
+    </style>
+
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-tint": "#adc7ff",
+                        "primary-container": "#1a73e8",
+                        "surface-container-low": "#1c1b1b",
+                        "on-primary-fixed": "#001a41",
+                        "tertiary-container": "#76767a",
+                        "outline": "#8b909f",
+                        "on-secondary-fixed-variant": "#41474d",
+                        "on-background": "#e5e2e1",
+                        "inverse-on-surface": "#313030",
+                        "primary-fixed": "#d8e2ff",
+                        "secondary-fixed-dim": "#c1c7cd",
+                        "on-tertiary-fixed": "#1a1c1e",
+                        "tertiary-fixed-dim": "#c7c6ca",
+                        "secondary-container": "#41474d",
+                        "on-surface-variant": "#c1c6d6",
+                        "tertiary-fixed": "#e3e2e6",
+                        "inverse-primary": "#005bc0",
+                        "error": "#ffb4ab",
+                        "surface-container-lowest": "#0e0e0e",
+                        "surface-container-highest": "#353534",
+                        "on-tertiary-fixed-variant": "#46474a",
+                        "surface-container": "#201f1f",
+                        "outline-variant": "#414754",
+                        "surface-dim": "#131313",
+                        "secondary-fixed": "#dde3e9",
+                        "on-error-container": "#ffdad6",
+                        "on-secondary-container": "#b0b6bc",
+                        "surface-bright": "#393939",
+                        "on-tertiary-container": "#ffffff",
+                        "on-secondary": "#2b3136",
+                        "on-primary-container": "#ffffff",
+                        "surface-container-high": "#2a2a2a",
+                        "on-primary-fixed-variant": "#004493",
+                        "on-primary": "#002e68",
+                        "on-surface": "#e5e2e1",
+                        "on-error": "#690005",
+                        "error-container": "#93000a",
+                        "background": "#131313",
+                        "on-tertiary": "#2f3033",
+                        "inverse-surface": "#e5e2e1",
+                        "tertiary": "#c7c6ca",
+                        "primary": "#adc7ff",
+                        "surface": "#131313",
+                        "primary-fixed-dim": "#adc7ff",
+                        "on-secondary-fixed": "#161c21",
+                        "secondary": "#c1c7cd",
+                        "surface-variant": "#353534"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "1rem",
+                        "margin-page": "1.5rem",
+                        "grid-cell-height": "48px",
+                        "padding-compact": "0.5rem",
+                        "sidebar-width": "256px",
+                        "padding-standard": "1rem"
+                    },
+                    "fontFamily": {
+                        "headline-sm": ["Inter"],
+                        "display-date": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "body-md": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "grid-number": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-sm": ["16px", { "lineHeight": "24px", "fontWeight": "500" }],
+                        "display-date": ["22px", { "lineHeight": "28px", "fontWeight": "500" }],
+                        "body-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "label-caps": ["11px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "grid-number": ["24px", { "lineHeight": "32px", "fontWeight": "300" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-surface text-on-surface flex flex-col h-screen overflow-hidden">
+
+    @if (!string.IsNullOrWhiteSpace(Model.SuccessMessage))
+    {
+        <div class="fixed top-20 right-20 z-[999] px-4 py-3 rounded-lg bg-green-900/90 text-green-200 border border-green-700 shadow-xl">
+            @Model.SuccessMessage
+        </div>
+    }
+
+    @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+    {
+        <div class="fixed top-20 right-20 z-[999] px-4 py-3 rounded-lg bg-red-900/90 text-red-200 border border-red-700 shadow-xl">
+            @Model.ErrorMessage
+        </div>
+    }
+
+    <header class="flex justify-between items-center px-4 h-16 w-full bg-[#1F1F1F] dark:bg-gray-900 border-b border-[#3C4043] dark:border-gray-800 font-inter text-sm antialiased sticky top-0 z-50">
+        <div class="flex items-center gap-4">
+            <button id="sidebarToggle" onclick="toggleSidebar()" class="p-2 hover:bg-[#303134] dark:hover:bg-gray-800 transition-colors rounded-full cursor-pointer">
+                <span class="material-symbols-outlined text-white">menu</span>
+            </button>
+
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-[#1A73E8] text-2xl">calendar_today</span>
+                <span class="text-xl font-bold text-white tracking-tight">Chronos</span>
+            </div>
+
+            <div class="flex items-center gap-1 ml-6">
+                <a asp-controller="Calendar"
+                   asp-action="Index"
+                   asp-route-weekStart="@todayWeekStart.ToString("yyyy-MM-dd")"
+                   class="px-4 py-2 border border-[#3C4043] text-on-surface rounded font-medium hover:bg-[#303134] transition-colors">
+                    Today
+                </a>
+
+                <div class="flex ml-2">
+                    <a asp-controller="Calendar"
+                       asp-action="Index"
+                       asp-route-weekStart="@Model.PreviousWeekStart.ToString("yyyy-MM-dd")"
+                       class="p-2 hover:bg-[#303134] transition-colors rounded-full">
+                        <span class="material-symbols-outlined">chevron_left</span>
+                    </a>
+
+                    <a asp-controller="Calendar"
+                       asp-action="Index"
+                       asp-route-weekStart="@Model.NextWeekStart.ToString("yyyy-MM-dd")"
+                       class="p-2 hover:bg-[#303134] transition-colors rounded-full">
+                        <span class="material-symbols-outlined">chevron_right</span>
+                    </a>
+                </div>
+
+                <h1 class="text-display-date font-display-date ml-4">
+                    @Model.WeekStart.ToString("MMMM yyyy")
+                </h1>
+            </div>
+        </div>
+
+        <form asp-controller="Calendar" asp-action="Index" method="get" class="flex-1 max-w-2xl px-8">
+            <input type="hidden" name="weekStart" value="@Model.WeekStart.ToString("yyyy-MM-dd")" />
+
+            <div class="relative group">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">
+                    search
+                </span>
+
+                <input name="q"
+                       value="@Model.SearchQuery"
+                       class="w-full bg-[#303134] border-none rounded-lg py-2.5 pl-10 pr-4 text-on-surface focus:ring-2 focus:ring-primary-container"
+                       placeholder="Search"
+                       type="text" />
+            </div>
+        </form>
+
+        <div class="flex items-center gap-2">
+            <div class="flex items-center border border-[#3C4043] rounded px-3 py-1.5 mr-4 hover:bg-[#303134] cursor-pointer">
+                <span class="mr-2">Week</span>
+                <span class="material-symbols-outlined text-sm">arrow_drop_down</span>
+            </div>
+
+            <button class="p-2 hover:bg-[#303134] transition-colors rounded-full">
+                <span class="material-symbols-outlined">help</span>
+            </button>
+
+            <button class="p-2 hover:bg-[#303134] transition-colors rounded-full">
+                <span class="material-symbols-outlined">notifications</span>
+            </button>
+
+            <form asp-controller="Auth" asp-action="Logout" method="post" class="ml-2">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="px-3 py-2 rounded-lg bg-[#303134] hover:bg-[#3C4043] text-white">
+                    Logout
+                </button>
+            </form>
+
+            <div class="ml-2 w-8 h-8 rounded-full overflow-hidden border border-[#3C4043] bg-primary-container flex items-center justify-center">
+                <span class="text-white text-sm font-bold">
+                    @(Context.Session.GetString("UserName")?.Substring(0, 1).ToUpper() ?? "U")
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex flex-1 overflow-hidden">
+        <aside id="sidebar" class="fixed left-0 top-16 h-[calc(100vh-64px)] w-64 transition-transform duration-300 bg-[#1F1F1F] dark:bg-gray-900 border-r border-[#3C4043] dark:border-gray-800 flex flex-col py-4 gap-2 font-inter text-sm font-medium z-40">
+            <div class="px-4 mb-6">
+                <button onclick="openCreateModal()"
+                        class="flex items-center gap-3 bg-white text-gray-900 px-6 py-3.5 rounded-full shadow-lg hover:shadow-xl transition-all font-bold active:opacity-80">
+                    <span class="material-symbols-outlined font-bold">add</span>
+                    <span>Create</span>
+                </button>
+            </div>
+
+            <div class="px-4 mb-8">
+                <div class="flex justify-between items-center mb-4 px-2">
+                    <span class="font-bold text-white">@Model.WeekStart.ToString("MMMM yyyy")</span>
+
+                    <div class="flex gap-1">
+                        <a asp-controller="Calendar"
+                           asp-action="Index"
+                           asp-route-weekStart="@Model.PreviousWeekStart.ToString("yyyy-MM-dd")"
+                           class="material-symbols-outlined text-sm cursor-pointer hover:bg-gray-800 rounded p-1">chevron_left</a>
+
+                        <a asp-controller="Calendar"
+                           asp-action="Index"
+                           asp-route-weekStart="@Model.NextWeekStart.ToString("yyyy-MM-dd")"
+                           class="material-symbols-outlined text-sm cursor-pointer hover:bg-gray-800 rounded p-1">chevron_right</a>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-7 text-center gap-y-2">
+                    <div class="text-[10px] text-[#9AA0A6]">S</div>
+                    <div class="text-[10px] text-[#9AA0A6]">M</div>
+                    <div class="text-[10px] text-[#9AA0A6]">T</div>
+                    <div class="text-[10px] text-[#9AA0A6]">W</div>
+                    <div class="text-[10px] text-[#9AA0A6]">T</div>
+                    <div class="text-[10px] text-[#9AA0A6]">F</div>
+                    <div class="text-[10px] text-[#9AA0A6]">S</div>
+
+                    @for (var i = 0; i < 35; i++)
+                    {
+                        var miniDay = miniGridStart.AddDays(i);
+                        var isCurrentMonth = miniDay.Month == Model.WeekStart.Month;
+                        var isToday = miniDay.Date == DateTime.Today;
+                        var miniWeekStart = miniDay.AddDays(-(((int)miniDay.DayOfWeek + 6) % 7));
+
+                        <a asp-controller="Calendar"
+                           asp-action="Index"
+                           asp-route-weekStart="@miniWeekStart.ToString("yyyy-MM-dd")"
+                           class="text-xs py-1 @(isCurrentMonth ? "hover:bg-gray-800 rounded-full cursor-pointer" : "text-gray-600") @(isToday ? "bg-primary-container text-white rounded-full" : "")">
+                            @miniDay.Day
+                        </a>
+                    }
+                </div>
+            </div>
+
+            <nav class="flex flex-col gap-1 overflow-y-auto">
+                <div class="flex items-center gap-3 px-6 py-2 bg-[#1A73E8]/20 text-[#1A73E8] rounded-r-full border-l-4 border-[#1A73E8] transition-all duration-200">
+                    <span class="material-symbols-outlined">calendar_view_week</span>
+                    <span>Week</span>
+                </div>
+
+                <div class="flex items-center gap-3 px-6 py-2 text-[#9AA0A6] dark:text-gray-400 hover:text-white hover:bg-[#303134] rounded-lg transition-all duration-200 cursor-pointer">
+                    <span class="material-symbols-outlined">calendar_view_day</span>
+                    <span>Day</span>
+                </div>
+
+                <div class="flex items-center gap-3 px-6 py-2 text-[#9AA0A6] dark:text-gray-400 hover:text-white hover:bg-[#303134] rounded-lg transition-all duration-200 cursor-pointer">
+                    <span class="material-symbols-outlined">calendar_view_month</span>
+                    <span>Month</span>
+                </div>
+
+                <div class="flex items-center gap-3 px-6 py-2 text-[#9AA0A6] dark:text-gray-400 hover:text-white hover:bg-[#303134] rounded-lg transition-all duration-200 cursor-pointer">
+                    <span class="material-symbols-outlined">view_agenda</span>
+                    <span>Schedule</span>
+                </div>
+
+                <div class="flex items-center gap-3 px-6 py-2 text-[#9AA0A6] dark:text-gray-400 hover:text-white hover:bg-[#303134] rounded-lg transition-all duration-200 cursor-pointer">
+                    <span class="material-symbols-outlined">check_circle</span>
+                    <span>Tasks</span>
+                </div>
+
+                <div class="mt-8 px-6">
+                    <div class="flex justify-between items-center text-label-caps font-label-caps text-on-surface-variant mb-4">
+                        <span>MY CALENDARS</span>
+                        <span class="material-symbols-outlined text-sm">keyboard_arrow_up</span>
+                    </div>
+
+                    <div class="flex flex-col gap-3">
+                        <label class="flex items-center gap-3 cursor-pointer">
+                            <input checked class="w-4 h-4 rounded border-[#3C4043] bg-transparent text-[#1A73E8] focus:ring-0 focus:ring-offset-0" type="checkbox" />
+                            <span class="text-xs text-on-surface">
+                                @(Context.Session.GetString("UserName") ?? "My Calendar")
+                            </span>
+                        </label>
+
+                        <label class="flex items-center gap-3 cursor-pointer">
+                            <input checked class="w-4 h-4 rounded border-[#3C4043] bg-transparent text-[#34A853] focus:ring-0 focus:ring-offset-0" type="checkbox" />
+                            <span class="text-xs text-on-surface">Group Meetings</span>
+                        </label>
+
+                        <label class="flex items-center gap-3 cursor-pointer">
+                            <input class="w-4 h-4 rounded border-[#3C4043] bg-transparent text-[#FBBC04] focus:ring-0 focus:ring-offset-0" type="checkbox" />
+                            <span class="text-xs text-on-surface">Tasks</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="mt-auto pt-4 border-t border-[#3C4043] mx-4 mb-4">
+                    <div class="flex items-center gap-3 px-2 py-2 text-[#9AA0A6] dark:text-gray-400 hover:text-white hover:bg-[#303134] rounded-lg transition-all duration-200 cursor-pointer">
+                        <span class="material-symbols-outlined">settings</span>
+                        <span>Settings</span>
+                    </div>
+                </div>
+            </nav>
+        </aside>
+
+        <main id="calendarMain" class="flex-1 ml-64 transition-all duration-300 overflow-y-auto bg-surface-dim relative">
+            <div class="sticky top-0 z-30 bg-surface-dim border-b border-[#3C4043] flex min-w-full">
+                <div class="w-16 flex-shrink-0 border-r border-[#3C4043]"></div>
+
+                <div class="flex-1 grid grid-cols-7">
+                    @for (var i = 0; i < Model.Days.Count; i++)
+                    {
+                        var day = Model.Days[i];
+                        var isToday = day.Date == DateTime.Today;
+
+                        <div class="py-3 text-center border-r border-[#3C4043] @(isToday ? "bg-primary-container/10" : "")">
+                            <div class="text-label-caps font-label-caps @(isToday ? "text-primary-container font-bold" : "text-on-surface-variant") uppercase">
+                                @day.ToString("ddd")
+                            </div>
+
+                            @if (isToday)
+                            {
+                                <div class="text-grid-number font-grid-number bg-primary-container text-white w-10 h-10 flex items-center justify-center rounded-full mx-auto">
+                                    @day.Day
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="text-grid-number font-grid-number">
+                                    @day.Day
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="flex min-w-full relative">
+                <div class="w-16 flex-shrink-0 flex flex-col">
+                    @foreach (var time in Model.TimeSlots)
+                    {
+                        <div class="h-12 border-r border-[#3C4043] relative">
+                            <span class="absolute right-2 top-0 translate-y-[6px] text-[10px] leading-none text-[#9AA0A6]">
+                                @time
+                            </span>
+                        </div>
+                    }
+                </div>
+
+                <div class="flex-1 grid grid-cols-7 divide-x divide-[#3C4043]">
+                    @for (var dayIndex = 0; dayIndex < 7; dayIndex++)
+                    {
+                        var day = Model.Days[dayIndex];
+                        var isToday = day.Date == DateTime.Today;
+                        var isWeekend = dayIndex >= 5;
+                        var dayAppointments = Model.Appointments
+                            .Where(x => x.DayIndex == dayIndex)
+                            .ToList();
+
+                        <div class="divide-y divide-[#3C4043]/30 min-h-screen relative @(isToday ? "bg-primary-container/5" : isWeekend ? "bg-surface-container-low/30" : "")">
+                            @for (int slotIndex = 0; slotIndex < Model.TimeSlots.Count; slotIndex++)
+                            {
+                                var slotHour = 1 + slotIndex;
+                                var slotStart = day.Date.AddHours(slotHour);
+                                var slotEnd = slotStart.AddHours(1);
+
+                                <div class="h-12 calendar-cell cursor-pointer"
+                                     data-start="@slotStart.ToString("yyyy-MM-ddTHH:mm")"
+                                     data-end="@slotEnd.ToString("yyyy-MM-ddTHH:mm")"
+                                     onclick="openCreateModalWithTime(this)">
+                                </div>
+                            }
+
+                            @if (isToday)
+{
+    <div id="currentTimeLine"
+         class="absolute left-0 right-0 h-[2px] bg-red-500 z-20 flex items-center pointer-events-none"
+         style="top:0px;">
+        <div class="w-3 h-3 bg-red-500 rounded-full -ml-1.5 shadow-sm"></div>
+    </div>
+}
+
+                            @foreach (var item in dayAppointments)
+                            {
+                                <div class="absolute left-1 right-1 bg-[#1A73E8]/30 border-l-4 border-[#1A73E8] rounded p-2 z-10 cursor-pointer hover:brightness-110 overflow-hidden"
+                                     style="top:@(item.TopPx)px; height:@(item.HeightPx)px;"
+                                     title="@item.Title - @item.TimeText">
+                                    <div class="text-xs font-bold truncate">
+                                        @item.Title
+                                    </div>
+
+                                    <div class="text-[10px] opacity-80">
+                                        @item.TimeText
+                                    </div>
+
+                                    @if (!string.IsNullOrWhiteSpace(item.Location))
+                                    {
+                                        <div class="text-[10px] opacity-80 truncate">
+                                            @item.Location
+                                        </div>
+                                    }
+
+                                    @if (item.IsGroupMeeting)
+                                    {
+                                        <div class="text-[10px] opacity-80">
+                                            Group Meeting
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </main>
+
+        <aside class="w-14 bg-[#1F1F1F] border-l border-[#3C4043] flex flex-col items-center py-4 gap-6 z-40">
+            <button class="p-2 hover:bg-gray-800 rounded-full transition-colors text-primary-container">
+                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">keep</span>
+            </button>
+
+            <button class="p-2 hover:bg-gray-800 rounded-full transition-colors text-blue-400">
+                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">task_alt</span>
+            </button>
+
+            <button class="p-2 hover:bg-gray-800 rounded-full transition-colors text-orange-400">
+                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">contacts</span>
+            </button>
+
+            <div class="w-6 h-px bg-[#3C4043]"></div>
+
+            <button class="p-2 hover:bg-gray-800 rounded-full transition-colors">
+                <span class="material-symbols-outlined">add</span>
+            </button>
+        </aside>
+    </div>
+
+    <div class="fixed bottom-8 right-20 z-50">
+        <button class="bg-surface-container-high hover:bg-surface-container-highest text-primary rounded-full p-4 shadow-2xl border border-outline-variant flex items-center gap-2 group transition-all">
+            <span class="material-symbols-outlined">auto_fix_high</span>
+            <span class="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-300 font-medium">
+                Auto-Schedule
+            </span>
+        </button>
+    </div>
+
+    <div id="createModal"
+         class="fixed inset-0 bg-background/80 backdrop-blur-sm z-[100] items-center justify-center p-4 @(Model.ShowCreateModal || Model.ConflictAppointment != null || Model.MatchingGroupMeeting != null ? "flex" : "hidden")">
+
+        <div class="w-full max-w-md bg-surface-container-high rounded-xl border border-outline-variant shadow-2xl overflow-hidden flex flex-col">
+            <div class="p-6 border-b border-outline-variant flex justify-between items-center">
+                <h2 class="font-display-date text-display-date text-on-surface">
+                    Add Appointment
+                </h2>
+
+                <button onclick="closeCreateModal()" class="text-on-surface-variant hover:text-on-surface transition-colors">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+
+            @if (Model.ConflictAppointment != null)
+            {
+                <div class="p-6 space-y-5">
+                    <div class="rounded-lg border border-error bg-error-container/40 p-4">
+                        <h3 class="text-on-error-container font-bold mb-2">
+                            Schedule Conflict
+                        </h3>
+
+                        <p class="text-on-error-container text-sm">
+                            You already have <strong>@Model.ConflictAppointment.Title</strong>
+                            at @Model.ConflictAppointment.TimeText.
+                        </p>
+                    </div>
+
+                    <form asp-controller="Calendar" asp-action="Create" method="post" class="space-y-3">
+                        @Html.AntiForgeryToken()
+
+                        <input type="hidden" name="Title" value="@Model.Form.Title" />
+                        <input type="hidden" name="Location" value="@Model.Form.Location" />
+                        <input type="hidden" name="StartTime" value="@Model.Form.StartTime.ToString("yyyy-MM-ddTHH:mm")" />
+                        <input type="hidden" name="EndTime" value="@Model.Form.EndTime.ToString("yyyy-MM-ddTHH:mm")" />
+                        <input type="hidden" name="ReminderMinutesBefore" value="@Model.Form.ReminderMinutesBefore" />
+                        <input type="hidden" name="WeekStart" value="@Model.WeekStart.ToString("yyyy-MM-dd")" />
+                        <input type="hidden" name="Choice" value="Replace" />
+
+                        <button type="submit" class="w-full px-8 py-2.5 bg-error-container text-on-error-container rounded-lg font-semibold">
+                            Replace Previous Appointment
+                        </button>
+                    </form>
+
+                    <form asp-controller="Calendar" asp-action="Create" method="post" class="space-y-3">
+                        @Html.AntiForgeryToken()
+
+                        <input type="hidden" name="Title" value="@Model.Form.Title" />
+                        <input type="hidden" name="Location" value="@Model.Form.Location" />
+                        <input type="hidden" name="ReminderMinutesBefore" value="@Model.Form.ReminderMinutesBefore" />
+                        <input type="hidden" name="WeekStart" value="@Model.WeekStart.ToString("yyyy-MM-dd")" />
+                        <input type="hidden" name="Choice" value="Reschedule" />
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <input name="NewStartTime"
+                                   type="datetime-local"
+                                   class="bg-surface-container-lowest border border-outline-variant rounded-lg p-3 text-on-surface" />
+
+                            <input name="NewEndTime"
+                                   type="datetime-local"
+                                   class="bg-surface-container-lowest border border-outline-variant rounded-lg p-3 text-on-surface" />
+                        </div>
+
+                        <button type="submit" class="w-full px-8 py-2.5 bg-primary-container text-white rounded-lg font-semibold">
+                            Reschedule
+                        </button>
+                    </form>
+                </div>
+            }
+            else if (Model.MatchingGroupMeeting != null)
+            {
+                <div class="p-6 space-y-5">
+                    <div class="rounded-lg border border-primary bg-primary-container/20 p-4">
+                        <h3 class="text-primary font-bold mb-2">
+                            Group Meeting Found
+                        </h3>
+
+                        <p class="text-on-surface-variant text-sm">
+                            A group meeting named
+                            <strong class="text-on-surface">@Model.MatchingGroupMeeting.Title</strong>
+                            has the same duration. Do you want to join?
+                        </p>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <form asp-controller="Calendar" asp-action="Create" method="post">
+                            @Html.AntiForgeryToken()
+
+                            <input type="hidden" name="Title" value="@Model.Form.Title" />
+                            <input type="hidden" name="Location" value="@Model.Form.Location" />
+                            <input type="hidden" name="StartTime" value="@Model.Form.StartTime.ToString("yyyy-MM-ddTHH:mm")" />
+                            <input type="hidden" name="EndTime" value="@Model.Form.EndTime.ToString("yyyy-MM-ddTHH:mm")" />
+                            <input type="hidden" name="ReminderMinutesBefore" value="@Model.Form.ReminderMinutesBefore" />
+                            <input type="hidden" name="MatchingMeetingId" value="@Model.MatchingGroupMeeting.AppointmentId" />
+                            <input type="hidden" name="WeekStart" value="@Model.WeekStart.ToString("yyyy-MM-dd")" />
+                            <input type="hidden" name="Choice" value="Join" />
+
+                            <button type="submit" class="w-full px-8 py-2.5 bg-primary-container text-white rounded-lg font-semibold">
+                                Join
+                            </button>
+                        </form>
+
+                        <form asp-controller="Calendar" asp-action="Create" method="post">
+                            @Html.AntiForgeryToken()
+
+                            <input type="hidden" name="Title" value="@Model.Form.Title" />
+                            <input type="hidden" name="Location" value="@Model.Form.Location" />
+                            <input type="hidden" name="StartTime" value="@Model.Form.StartTime.ToString("yyyy-MM-ddTHH:mm")" />
+                            <input type="hidden" name="EndTime" value="@Model.Form.EndTime.ToString("yyyy-MM-ddTHH:mm")" />
+                            <input type="hidden" name="ReminderMinutesBefore" value="@Model.Form.ReminderMinutesBefore" />
+                            <input type="hidden" name="WeekStart" value="@Model.WeekStart.ToString("yyyy-MM-dd")" />
+                            <input type="hidden" name="Choice" value="Refuse" />
+
+                            <button type="submit" class="w-full px-8 py-2.5 border border-outline-variant text-on-surface rounded-lg font-semibold">
+                                Refuse
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <form asp-controller="Calendar" asp-action="Create" method="post">
+                    @Html.AntiForgeryToken()
+
+                    <input id="modalWeekStart" type="hidden" name="WeekStart" value="@Model.WeekStart.ToString("yyyy-MM-dd")" />
+
+                    <div class="p-6 space-y-5">
+                        <div class="space-y-2">
+                            <label class="font-label-caps text-label-caps text-on-surface-variant">
+                                EVENT TITLE
+                            </label>
+
+                            <input name="Title"
+                                   value="@Model.Form.Title"
+                                   class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg p-3 text-on-surface"
+                                   placeholder="Enter title"
+                                   type="text"
+                                   required />
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="font-label-caps text-label-caps text-on-surface-variant">
+                                LOCATION
+                            </label>
+
+                            <input name="Location"
+                                   value="@Model.Form.Location"
+                                   class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg p-3 text-on-surface"
+                                   placeholder="Add location"
+                                   type="text" />
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="space-y-2">
+                                <label class="font-label-caps text-label-caps text-on-surface-variant">
+                                    START TIME
+                                </label>
+
+                                <input id="modalStartTime"
+                                       name="StartTime"
+                                       value="@Model.Form.StartTime.ToString("yyyy-MM-ddTHH:mm")"
+                                       class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg p-3 text-on-surface"
+                                       type="datetime-local"
+                                       required />
+                            </div>
+
+                            <div class="space-y-2">
+                                <label class="font-label-caps text-label-caps text-on-surface-variant">
+                                    END TIME
+                                </label>
+
+                                <input id="modalEndTime"
+                                       name="EndTime"
+                                       value="@Model.Form.EndTime.ToString("yyyy-MM-ddTHH:mm")"
+                                       class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg p-3 text-on-surface"
+                                       type="datetime-local"
+                                       required />
+                            </div>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="font-label-caps text-label-caps text-on-surface-variant">
+                                REMINDERS
+                            </label>
+
+                            <select name="ReminderMinutesBefore"
+                                    class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg p-3 text-on-surface">
+                                <option value="">No reminder</option>
+                                <option value="15">15 minutes before</option>
+                                <option value="30">30 minutes before</option>
+                                <option value="60">1 hour before</option>
+                                <option value="1440">1 day before</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="p-6 bg-surface-container-high border-t border-outline-variant flex justify-end gap-3">
+                        <button type="button"
+                                onclick="closeCreateModal()"
+                                class="px-5 py-2.5 text-on-surface hover:bg-surface-variant rounded-lg transition-colors">
+                            Cancel
+                        </button>
+
+                        <button type="submit"
+                                class="px-8 py-2.5 bg-primary-container text-white rounded-lg transition-all shadow-lg">
+                            Save
+                        </button>
+                    </div>
+                </form>
+            }
+        </div>
+    </div>
+
+    <script>
+        function openCreateModal() {
+            const modal = document.getElementById("createModal");
+            if (!modal) return;
+
+            modal.classList.remove("hidden");
+            modal.classList.add("flex");
+        }
+
+        function closeCreateModal() {
+            const modal = document.getElementById("createModal");
+            if (!modal) return;
+
+            modal.classList.add("hidden");
+            modal.classList.remove("flex");
+        }
+
+        function openCreateModalWithTime(cell) {
+            const start = cell.dataset.start;
+            const end = cell.dataset.end;
+
+            const startInput = document.getElementById("modalStartTime");
+            const endInput = document.getElementById("modalEndTime");
+
+            if (startInput && start) {
+                startInput.value = start;
+            }
+
+            if (endInput && end) {
+                endInput.value = end;
+            }
+
+            openCreateModal();
+        }
+    
+        function updateCurrentTimeLine() {
+            const line = document.getElementById("currentTimeLine");
+            if (!line) return;
+
+            const now = new Date();
+
+            const calendarStartHour = 1;
+            const calendarEndHour = 24;
+            const pixelsPerHour = 48;
+
+            const minutesFromStart =
+                ((now.getHours() - calendarStartHour) * 60) + now.getMinutes();
+
+            const totalVisibleMinutes = (calendarEndHour - calendarStartHour) * 60;
+
+            if (minutesFromStart < 0 || minutesFromStart > totalVisibleMinutes) {
+                line.style.display = "none";
+                return;
+            }
+
+            const topPx = minutesFromStart * pixelsPerHour / 60;
+
+            line.style.display = "flex";
+            line.style.top = `${topPx}px`;
+        }
+
+        updateCurrentTimeLine();
+        setInterval(updateCurrentTimeLine, 60000);
+    
+        function toggleSidebar() {
+            const sidebar = document.getElementById("sidebar");
+            const main = document.getElementById("calendarMain");
+
+            if (!sidebar || !main) return;
+
+            const isCollapsed = sidebar.classList.toggle("-translate-x-full");
+
+            if (isCollapsed) {
+                main.classList.remove("ml-64");
+                main.classList.add("ml-0");
+                localStorage.setItem("chronoSidebarCollapsed", "true");
+            } else {
+                main.classList.remove("ml-0");
+                main.classList.add("ml-64");
+                localStorage.setItem("chronoSidebarCollapsed", "false");
+            }
+        }
+
+        function applySidebarState() {
+            const sidebar = document.getElementById("sidebar");
+            const main = document.getElementById("calendarMain");
+
+            if (!sidebar || !main) return;
+
+            const isCollapsed = localStorage.getItem("chronoSidebarCollapsed") === "true";
+
+            if (isCollapsed) {
+                sidebar.classList.add("-translate-x-full");
+                main.classList.remove("ml-64");
+                main.classList.add("ml-0");
+            } else {
+                sidebar.classList.remove("-translate-x-full");
+                main.classList.remove("ml-0");
+                main.classList.add("ml-64");
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", applySidebarState);
+    </script>
+</body>
+</html>
+
+
+
+
+

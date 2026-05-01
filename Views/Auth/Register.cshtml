@@ -1,0 +1,96 @@
+﻿@model RegisterViewModel
+
+@{
+    ViewBag.Title = "Register";
+}
+
+<div class="surface-container rounded-xl border border-outline-variant/30 p-8 shadow-2xl bg-surface-container">
+    <h2 class="text-2xl font-bold mb-2 text-on-surface">Create account</h2>
+    <p class="font-body-md text-on-surface-variant mb-6">
+        Register with your Gmail to start using ChronoPlan.
+    </p>
+
+    <div asp-validation-summary="ModelOnly" class="text-error mb-4 text-sm"></div>
+
+    <form asp-controller="Auth" asp-action="Register" method="post" class="space-y-5">
+        @Html.AntiForgeryToken()
+
+        <div class="space-y-2">
+            <label asp-for="Name" class="font-label-caps text-on-surface-variant block uppercase">
+                Full Name
+            </label>
+            <input asp-for="Name"
+                   class="w-full h-12 bg-surface-container-highest border border-outline-variant/50 rounded-lg px-4 font-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary-container/50 focus:border-primary-container transition-all"
+                   placeholder="Your name" />
+            <span asp-validation-for="Name" class="text-error text-sm"></span>
+        </div>
+
+        <div class="space-y-2">
+            <label asp-for="Email" class="font-label-caps text-on-surface-variant block uppercase">
+                Gmail Address
+            </label>
+
+            <div class="relative">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[20px]">mail</span>
+                <input asp-for="Email"
+                       class="w-full h-12 bg-surface-container-highest border border-outline-variant/50 rounded-lg pl-10 pr-4 font-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary-container/50 focus:border-primary-container transition-all"
+                       placeholder="name@gmail.com"
+                       type="email" />
+            </div>
+
+            <span asp-validation-for="Email" class="text-error text-sm"></span>
+        </div>
+
+        <div class="space-y-2">
+            <label asp-for="PhoneNumber" class="font-label-caps text-on-surface-variant block uppercase">
+                Phone Number
+            </label>
+            <input asp-for="PhoneNumber"
+                   class="w-full h-12 bg-surface-container-highest border border-outline-variant/50 rounded-lg px-4 font-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary-container/50 focus:border-primary-container transition-all"
+                   placeholder="Optional" />
+            <span asp-validation-for="PhoneNumber" class="text-error text-sm"></span>
+        </div>
+
+        <div class="space-y-2">
+            <label asp-for="Password" class="font-label-caps text-on-surface-variant block uppercase">
+                Password
+            </label>
+            <input asp-for="Password"
+                   class="w-full h-12 bg-surface-container-highest border border-outline-variant/50 rounded-lg px-4 font-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary-container/50 focus:border-primary-container transition-all"
+                   type="password"
+                   placeholder="••••••••" />
+            <span asp-validation-for="Password" class="text-error text-sm"></span>
+        </div>
+
+        <div class="space-y-2">
+            <label asp-for="ConfirmPassword" class="font-label-caps text-on-surface-variant block uppercase">
+                Confirm Password
+            </label>
+            <input asp-for="ConfirmPassword"
+                   class="w-full h-12 bg-surface-container-highest border border-outline-variant/50 rounded-lg px-4 font-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary-container/50 focus:border-primary-container transition-all"
+                   type="password"
+                   placeholder="••••••••" />
+            <span asp-validation-for="ConfirmPassword" class="text-error text-sm"></span>
+        </div>
+
+        <button class="w-full h-12 bg-primary-container hover:bg-blue-600 text-white font-headline-sm rounded-lg shadow-lg shadow-primary-container/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+                type="submit">
+            Create Account
+        </button>
+    </form>
+
+    <div class="mt-8 text-center">
+        <p class="font-body-md text-on-surface-variant">
+            Already have an account?
+            <a asp-controller="Auth"
+               asp-action="Login"
+               class="text-primary font-semibold hover:underline transition-all">
+                Sign in
+            </a>
+        </p>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,100 @@
+﻿@model LoginViewModel
+
+@{
+    ViewBag.Title = "Login";
+}
+
+<div class="surface-container rounded-xl border border-outline-variant/30 p-8 shadow-2xl bg-surface-container">
+    <h2 class="text-2xl font-bold mb-2 text-on-surface">Welcome back</h2>
+    <p class="font-body-md text-on-surface-variant mb-6">
+        Enter your credentials to access your focus hub.
+    </p>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="mb-4 p-3 rounded-lg bg-green-900/40 text-green-200 text-sm">
+            @TempData["Success"]
+        </div>
+    }
+
+    <div asp-validation-summary="ModelOnly" class="text-error mb-4 text-sm"></div>
+
+    <form asp-controller="Auth" asp-action="Login" method="post" class="space-y-6">
+        @Html.AntiForgeryToken()
+
+        <div class="space-y-2">
+            <label asp-for="Email" class="font-label-caps text-on-surface-variant block uppercase">
+                Email Address
+            </label>
+
+            <div class="relative">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[20px]">mail</span>
+
+                <input asp-for="Email"
+                       class="w-full h-12 bg-surface-container-highest border border-outline-variant/50 rounded-lg pl-10 pr-4 font-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary-container/50 focus:border-primary-container transition-all placeholder:text-outline/60"
+                       placeholder="name@gmail.com"
+                       type="email" />
+            </div>
+
+            <span asp-validation-for="Email" class="text-error text-sm"></span>
+        </div>
+
+        <div class="space-y-2">
+            <label asp-for="Password" class="font-label-caps text-on-surface-variant block uppercase">
+                Password
+            </label>
+
+            <div class="relative">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[20px]">lock</span>
+
+                <input asp-for="Password"
+                       class="w-full h-12 bg-surface-container-highest border border-outline-variant/50 rounded-lg pl-10 pr-12 font-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary-container/50 focus:border-primary-container transition-all placeholder:text-outline/60"
+                       placeholder="••••••••"
+                       type="password" />
+
+                <button class="absolute right-3 top-1/2 -translate-y-1/2 text-outline hover:text-on-surface transition-colors"
+                        type="button">
+                    <span class="material-symbols-outlined text-[20px]">visibility</span>
+                </button>
+            </div>
+
+            <div class="pt-1">
+                <a asp-controller="Auth"
+                   asp-action="ForgotPassword"
+                   class="font-label-caps text-primary hover:underline transition-all">
+                    Forgot password?
+                </a>
+            </div>
+
+            <span asp-validation-for="Password" class="text-error text-sm"></span>
+        </div>
+
+        <button class="w-full h-12 bg-primary-container hover:bg-blue-600 text-white font-headline-sm rounded-lg shadow-lg shadow-primary-container/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+                type="submit">
+            Sign In
+        </button>
+    </form>
+
+    <div class="mt-8 text-center">
+        <p class="font-body-md text-on-surface-variant">
+            Don't have an account?
+            <a asp-controller="Auth"
+               asp-action="Register"
+               class="text-primary font-semibold hover:underline transition-all">
+                Sign up for free
+            </a>
+        </p>
+    </div>
+</div>
+
+<footer class="mt-8 flex justify-center">
+    <button type="button"
+            onclick="document.documentElement.classList.toggle('dark')"
+            class="font-label-caps text-outline hover:text-on-surface-variant transition-colors uppercase">
+        Toggle Theme
+    </button>
+</footer>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

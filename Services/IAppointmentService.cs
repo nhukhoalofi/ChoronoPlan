@@ -1,0 +1,39 @@
+﻿using ChronoPlan.ViewModels;
+
+namespace ChronoPlan.Services;
+
+public interface IAppointmentService
+{
+    Task<AppointmentServiceResult> CreateAppointmentAsync(
+        string userId,
+        AppointmentCreateViewModel model);
+}
+
+public class AppointmentServiceResult
+{
+    public string Status { get; set; } = "Success";
+
+    public string? Message { get; set; }
+
+    public AppointmentListItemViewModel? ConflictAppointment { get; set; }
+
+    public AppointmentListItemViewModel? MatchingGroupMeeting { get; set; }
+
+    public static AppointmentServiceResult Success(string message)
+    {
+        return new AppointmentServiceResult
+        {
+            Status = "Success",
+            Message = message
+        };
+    }
+
+    public static AppointmentServiceResult Error(string message)
+    {
+        return new AppointmentServiceResult
+        {
+            Status = "Error",
+            Message = message
+        };
+    }
+}

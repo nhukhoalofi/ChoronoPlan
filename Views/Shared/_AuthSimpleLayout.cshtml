@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <title>@ViewBag.Title - ChronoPlan</title>
+    <partial name="_ThemeHead" />
+</head>
+
+<body class="min-h-screen flex items-center justify-center p-4 bg-surface-dim relative overflow-hidden">
+    <div class="absolute top-[-10%] left-[-5%] w-[40%] h-[40%] bg-primary-container opacity-[0.05] rounded-full blur-[120px]"></div>
+    <div class="absolute bottom-[-10%] right-[-5%] w-[30%] h-[30%] bg-primary-container opacity-[0.03] rounded-full blur-[100px]"></div>
+
+    <main class="w-full max-w-[440px] z-10">
+        <div class="flex flex-col items-center mb-8">
+            <div class="w-12 h-12 bg-primary-container rounded-xl flex items-center justify-center mb-4 shadow-lg shadow-primary-container/20">
+                <span class="material-symbols-outlined text-white text-[28px]">schedule</span>
+            </div>
+
+            <h1 class="font-headline-sm text-display-date text-on-surface tracking-tight mb-1">
+                ChronoPlan
+            </h1>
+
+            <p class="font-body-md text-on-secondary-container opacity-80">
+                Precision productivity awaits.
+            </p>
+        </div>
+
+        @RenderBody()
+    </main>
+
+    <div class="hidden lg:block absolute left-12 bottom-12 max-w-xs">
+        <div class="flex items-center gap-4 mb-4">
+            <div class="w-1 h-12 bg-primary-container rounded-full"></div>
+            <div>
+                <p class="font-headline-sm text-on-surface">Maximize your time.</p>
+                <p class="font-body-sm text-outline">
+                    Master your schedule with ChronoPlan.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
