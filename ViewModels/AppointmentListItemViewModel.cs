@@ -1,4 +1,6 @@
-﻿namespace ChronoPlan.ViewModels;
+using System.Globalization;
+
+namespace ChronoPlan.ViewModels;
 
 public class AppointmentListItemViewModel
 {
@@ -22,5 +24,6 @@ public class AppointmentListItemViewModel
 
     public int HeightPx { get; set; }
 
-    public string TimeText => $"{StartTime:HH:mm} - {EndTime:HH:mm}";
+    public string TimeText =>
+        $"{StartTime.ToString("h:mm tt", CultureInfo.InvariantCulture)} - {EndTime.ToString("h:mm tt", CultureInfo.InvariantCulture)}";
 }

@@ -35,4 +35,8 @@ public class CalendarPageViewModel
     public int CurrentTimeDayIndex { get; set; }
 
     public int CurrentTimeTopPx { get; set; }
+
+    public int UnreadNotificationCount { get; set; }
+
+    public List<NotificationViewModel> Notifications { get; set; } = new();
 }

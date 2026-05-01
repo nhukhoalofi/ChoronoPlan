@@ -1,4 +1,6 @@
-﻿using ChronoPlan.Data;
+﻿using ChronoPlan.BackgroundServices;
+using ChronoPlan.Data;
+using ChronoPlan.Hubs;
 using ChronoPlan.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,6 +21,9 @@ builder.Services.AddScoped<PasswordHasher>();
 builder.Services.AddScoped<IEmailSender, MailKitEmailSender>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IAppointmentService, AppointmentService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddSignalR();
+builder.Services.AddHostedService<ReminderBackgroundService>();
 
 builder.Services.AddSession(options =>
 {
@@ -42,6 +47,8 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseSession();
+
+app.MapHub<NotificationHub>("/notificationHub");
 
 app.MapControllerRoute(
     name: "default",

@@ -16,6 +16,10 @@ public class Reminder
 
     public bool IsCanceled { get; set; }
 
+    public bool IsSent { get; set; }
+
+    public DateTime? SentAt { get; set; }
+
     public void Trigger()
     {
     }

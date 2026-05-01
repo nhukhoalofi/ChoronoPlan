@@ -26,4 +26,7 @@ public class User
 
     public ICollection<AppointmentParticipant> AppointmentParticipants { get; set; }
         = new List<AppointmentParticipant>();
+
+    public ICollection<Notification> Notifications { get; set; }
+        = new List<Notification>();
 }

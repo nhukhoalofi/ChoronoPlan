@@ -17,7 +17,15 @@ public class AppointmentCreateViewModel
     [Required]
     public DateTime EndTime { get; set; } = DateTime.Today.AddHours(10);
 
-    public int? ReminderMinutesBefore { get; set; }
+    public List<int> ReminderMinutesBefore { get; set; } = new();
+
+    public string ReminderType { get; set; } = ChronoPlan.Services.ReminderType.Popup;
+
+    public bool IsGroupMeeting { get; set; }
+
+    public string? MatchingGroupMeetingAppointmentId { get; set; }
+
+    public string? GroupMeetingAction { get; set; }
 
     public string? Choice { get; set; }
 

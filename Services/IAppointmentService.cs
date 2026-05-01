@@ -1,10 +1,34 @@
-﻿using ChronoPlan.ViewModels;
+using ChronoPlan.Domain.Entities;
+using ChronoPlan.ViewModels;
 
 namespace ChronoPlan.Services;
 
 public interface IAppointmentService
 {
     Task<AppointmentServiceResult> CreateAppointmentAsync(
+        string userId,
+        AppointmentCreateViewModel model);
+
+    Task<AppointmentServiceResult> JoinGroupMeetingAsync(string appointmentId, string userId);
+
+    Task<AppointmentDetailsViewModel?> GetAppointmentDetailsAsync(string appointmentId, string userId);
+
+    Task<AppointmentServiceResult> UpdateAppointmentAsync(
+        string appointmentId,
+        string userId,
+        AppointmentCreateViewModel model);
+
+    Task<GroupMeeting?> FindMatchingGroupMeetingAsync(
+        string title,
+        DateTime startTime,
+        DateTime endTime,
+        string userId);
+
+    Task<AppointmentServiceResult> CreatePersonalAppointmentAsync(
+        string userId,
+        AppointmentCreateViewModel model);
+
+    Task<AppointmentServiceResult> CreateGroupMeetingAsync(
         string userId,
         AppointmentCreateViewModel model);
 }
@@ -18,6 +42,8 @@ public class AppointmentServiceResult
     public AppointmentListItemViewModel? ConflictAppointment { get; set; }
 
     public AppointmentListItemViewModel? MatchingGroupMeeting { get; set; }
+
+    public string? MatchingGroupMeetingAppointmentId { get; set; }
 
     public static AppointmentServiceResult Success(string message)
     {

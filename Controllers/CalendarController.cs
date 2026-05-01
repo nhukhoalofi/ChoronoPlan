@@ -11,11 +11,13 @@ public class CalendarController : Controller
 {
     private readonly AppDbContext _db;
     private readonly IAppointmentService _appointmentService;
+    private readonly INotificationService _notificationService;
 
-    public CalendarController(AppDbContext db, IAppointmentService appointmentService)
+    public CalendarController(AppDbContext db, IAppointmentService appointmentService, INotificationService notificationService)
     {
         _db = db;
         _appointmentService = appointmentService;
+        _notificationService = notificationService;
     }
 
     [HttpGet]
@@ -29,9 +31,14 @@ public class CalendarController : Controller
 
         var model = await BuildCalendarPageAsync(userId, weekStart, q);
         model.SuccessMessage = TempData["Success"]?.ToString();
+        model.ErrorMessage = TempData["Error"]?.ToString();
+
+        model.UnreadNotificationCount = await _notificationService.GetUnreadCountAsync(userId);
+        model.Notifications = await _notificationService.GetLatestNotificationsAsync(userId);
 
         return View(model);
     }
+
 
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -51,6 +58,12 @@ public class CalendarController : Controller
             return RedirectToAction(nameof(Index), new { weekStart = NormalizeWeekStart(form.WeekStart ?? form.StartTime).ToString("yyyy-MM-dd") });
         }
 
+        if (result.Status == "AlreadyJoined")
+        {
+            TempData["Success"] = result.Message;
+            return RedirectToAction(nameof(Index), new { weekStart = NormalizeWeekStart(form.WeekStart ?? form.StartTime).ToString("yyyy-MM-dd") });
+        }
+
         var page = await BuildCalendarPageAsync(userId, form.WeekStart ?? form.StartTime, null);
         page.Form = form;
         page.Form.WeekStart = page.WeekStart;
@@ -58,8 +71,82 @@ public class CalendarController : Controller
         page.ErrorMessage = result.Message;
         page.ConflictAppointment = result.ConflictAppointment;
         page.MatchingGroupMeeting = result.MatchingGroupMeeting;
+        page.Form.MatchingGroupMeetingAppointmentId = result.MatchingGroupMeetingAppointmentId
+            ?? result.MatchingGroupMeeting?.AppointmentId;
 
         return View("Index", page);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> JoinGroupMeeting(string appointmentId, DateTime? weekStart)
+    {
+        var userId = GetCurrentUserId();
+        if (userId == null)
+        {
+            return RedirectToAction("Login", "Auth");
+        }
+
+        var result = await _appointmentService.JoinGroupMeetingAsync(appointmentId, userId);
+
+        if (result.Status == "Success")
+        {
+            TempData["Success"] = result.Message;
+        }
+        else
+        {
+            TempData["Error"] = result.Message;
+        }
+
+        return RedirectToAction(nameof(Index), new
+        {
+            weekStart = NormalizeWeekStart(weekStart ?? DateTime.Today).ToString("yyyy-MM-dd")
+        });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> EditAppointment(string appointmentId, AppointmentCreateViewModel form)
+    {
+        var userId = GetCurrentUserId();
+        if (userId == null)
+        {
+            return RedirectToAction("Login", "Auth");
+        }
+
+        var result = await _appointmentService.UpdateAppointmentAsync(appointmentId, userId, form);
+
+        if (result.Status == "Success")
+        {
+            TempData["Success"] = result.Message;
+        }
+        else
+        {
+            TempData["Error"] = result.Message;
+        }
+
+        return RedirectToAction(nameof(Index), new
+        {
+            weekStart = NormalizeWeekStart(form.WeekStart ?? form.StartTime).ToString("yyyy-MM-dd")
+        });
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> AppointmentDetails(string id)
+    {
+        var userId = GetCurrentUserId();
+        if (userId == null)
+        {
+            return Unauthorized();
+        }
+
+        var details = await _appointmentService.GetAppointmentDetailsAsync(id, userId);
+        if (details == null)
+        {
+            return NotFound();
+        }
+
+        return Json(details);
     }
 
     private string? GetCurrentUserId()

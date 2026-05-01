@@ -15,6 +15,7 @@ public class AppDbContext : DbContext
     public DbSet<Appointment> Appointments => Set<Appointment>();
     public DbSet<GroupMeeting> GroupMeetings => Set<GroupMeeting>();
     public DbSet<Reminder> Reminders => Set<Reminder>();
+    public DbSet<Notification> Notifications => Set<Notification>();
     public DbSet<AppointmentParticipant> AppointmentParticipants => Set<AppointmentParticipant>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -84,9 +85,43 @@ public class AppDbContext : DbContext
             entity.Property(x => x.Type).HasMaxLength(50).IsRequired();
             entity.Property(x => x.Message).HasMaxLength(255);
 
+            entity.Property(x => x.IsCanceled).IsRequired();
+            entity.Property(x => x.IsSent).IsRequired();
+            entity.Property(x => x.SentAt);
+
             entity.HasOne(x => x.Appointment)
                 .WithMany(x => x.Reminders)
                 .HasForeignKey(x => x.AppointmentId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<Notification>(entity =>
+        {
+            entity.ToTable("Notifications");
+            entity.HasKey(x => x.NotificationId);
+
+            entity.Property(x => x.NotificationId).HasMaxLength(50);
+            entity.Property(x => x.UserId).HasMaxLength(50).IsRequired();
+            entity.Property(x => x.AppointmentId).HasMaxLength(50).IsRequired();
+            entity.Property(x => x.ReminderId).HasMaxLength(50).IsRequired();
+            entity.Property(x => x.Title).HasMaxLength(200).IsRequired();
+            entity.Property(x => x.Message).HasMaxLength(500).IsRequired();
+            entity.Property(x => x.IsRead).IsRequired();
+            entity.Property(x => x.CreatedAt).IsRequired();
+
+            entity.HasOne(x => x.User)
+                .WithMany(x => x.Notifications)
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            entity.HasOne(x => x.Appointment)
+                .WithMany()
+                .HasForeignKey(x => x.AppointmentId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            entity.HasOne(x => x.Reminder)
+                .WithMany()
+                .HasForeignKey(x => x.ReminderId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
