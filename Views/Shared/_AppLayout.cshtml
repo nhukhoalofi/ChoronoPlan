@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html class="dark" lang="en">
+<html lang="en">
 <head>
     <title>@ViewBag.Title - ChronoPlan</title>
     <partial name="_ThemeHead" />
@@ -7,42 +7,42 @@
 
 <body class="bg-background text-on-surface font-body-md antialiased overflow-hidden">
     <!-- TopNavBar -->
-    <header class="flex justify-between items-center px-6 w-full sticky top-0 z-50 bg-zinc-900 dark:bg-[#1F1F1F] font-['Inter'] antialiased tracking-tight h-16 border-b border-zinc-800 dark:border-[#3C4043] flat no-shadows">
+    <header class="flex justify-between items-center px-6 w-full sticky top-0 z-50 bg-white font-['Inter'] antialiased tracking-tight h-16 border-b border-[#e5e7eb] shadow-sm">
         <div class="flex items-center gap-4">
-            <span class="text-lg font-bold text-white dark:text-[#F1F3F4]">
+            <span class="text-lg font-bold text-[#111827]">
                 Chronos Calendar
             </span>
 
-            <div class="ml-8 flex items-center bg-[#303134] rounded-lg px-3 py-1.5 w-96 border border-[#3C4043]">
-                <span class="material-symbols-outlined text-zinc-400 mr-2" data-icon="search">search</span>
-                <input class="bg-transparent border-none text-sm focus:ring-0 text-white w-full"
+            <div class="ml-8 flex items-center bg-[#f8fafc] rounded-lg px-3 py-1.5 w-96 border border-[#e5e7eb]">
+                <span class="material-symbols-outlined text-[#6b7280] mr-2" data-icon="search">search</span>
+                <input class="bg-transparent border-none text-sm focus:ring-0 text-[#111827] placeholder:text-[#6b7280] w-full"
                        placeholder="Search events"
                        type="text" />
             </div>
         </div>
 
         <div class="flex items-center gap-2">
-            <button class="p-2 rounded-full hover:bg-zinc-800 dark:hover:bg-[#303134] transition-colors text-zinc-400">
+            <button class="p-2 rounded-full hover:bg-[#f3f4f6] transition-colors text-[#374151]">
                 <span class="material-symbols-outlined" data-icon="notifications">notifications</span>
             </button>
 
-            <button class="p-2 rounded-full hover:bg-zinc-800 dark:hover:bg-[#303134] transition-colors text-zinc-400">
+            <button class="p-2 rounded-full hover:bg-[#f3f4f6] transition-colors text-[#374151]">
                 <span class="material-symbols-outlined" data-icon="settings">settings</span>
             </button>
 
-            <button class="p-2 rounded-full hover:bg-zinc-800 dark:hover:bg-[#303134] transition-colors text-zinc-400">
+            <button class="p-2 rounded-full hover:bg-[#f3f4f6] transition-colors text-[#374151]">
                 <span class="material-symbols-outlined" data-icon="help">help</span>
             </button>
 
             <form asp-controller="Auth" asp-action="Logout" method="post" class="ml-2">
                 @Html.AntiForgeryToken()
                 <button type="submit"
-                        class="px-3 py-2 rounded-lg bg-[#303134] hover:bg-[#3C4043] text-sm text-white">
+                        class="px-3 py-2 rounded-lg border border-[#d1d5db] bg-white hover:bg-[#f3f4f6] text-sm text-[#1f2937]">
                     Logout
                 </button>
             </form>
 
-            <div class="ml-2 h-8 w-8 rounded-full overflow-hidden border border-[#3C4043] bg-primary-container flex items-center justify-center">
+            <div class="ml-2 h-8 w-8 rounded-full overflow-hidden border border-[#d1d5db] bg-primary-container flex items-center justify-center">
                 <span class="text-white text-sm font-bold">
                     @(Context.Session.GetString("UserName")?.Substring(0, 1).ToUpper() ?? "U")
                 </span>
@@ -52,10 +52,10 @@
 
     <div class="flex h-[calc(100vh-64px)]">
         <!-- SideNavBar -->
-        <aside class="flex flex-col h-screen w-64 pt-20 pb-4 fixed left-0 bg-zinc-900 dark:bg-[#1F1F1F] font-['Inter'] text-sm font-medium border-r border-zinc-800 dark:border-[#3C4043] flat no-shadows z-40">
+        <aside class="flex flex-col h-screen w-64 pt-20 pb-4 fixed left-0 bg-white font-['Inter'] text-sm font-medium border-r border-[#e5e7eb] z-40">
             <div class="px-4 mb-6">
                 <button onclick="openCreateModal()"
-                        class="w-full bg-blue-600 dark:bg-[#1A73E8] text-white py-3 px-4 rounded-full flex items-center justify-center gap-3 shadow-lg hover:brightness-110 transition-all">
+                        class="w-full bg-primary-container text-white py-3 px-4 rounded-full flex items-center justify-center gap-3 shadow-lg hover:bg-blue-700 transition-all">
                     <span class="material-symbols-outlined" data-icon="add">add</span>
                     <span>Create Event</span>
                 </button>
@@ -67,17 +67,17 @@
                         Views
                     </div>
 
-                    <a class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-zinc-400 hover:bg-zinc-800 dark:hover:bg-[#303134] hover:text-white transition-all duration-200" href="#">
+                    <a class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-[#4b5563] hover:bg-[#f3f4f6] hover:text-[#111827] transition-all duration-200" href="#">
                         <span class="material-symbols-outlined" data-icon="calendar_view_day">calendar_view_day</span>
                         <span>Day</span>
                     </a>
 
-                    <a class="flex items-center gap-3 px-4 py-2.5 rounded-lg bg-blue-600/10 dark:bg-[#1A73E8]/10 text-blue-600 dark:text-[#8AB4F8] border-r-4 border-blue-600" href="#">
+                    <a class="flex items-center gap-3 px-4 py-2.5 rounded-lg bg-[#dbeafe] text-[#1d4ed8] border-r-4 border-[#2563eb]" href="#">
                         <span class="material-symbols-outlined" data-icon="calendar_view_week">calendar_view_week</span>
                         <span>Week</span>
                     </a>
 
-                    <a class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-zinc-400 hover:bg-zinc-800 dark:hover:bg-[#303134] hover:text-white transition-all duration-200" href="#">
+                    <a class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-[#4b5563] hover:bg-[#f3f4f6] hover:text-[#111827] transition-all duration-200" href="#">
                         <span class="material-symbols-outlined" data-icon="calendar_month">calendar_month</span>
                         <span>Month</span>
                     </a>
@@ -88,12 +88,12 @@
                         Shared
                     </div>
 
-                    <a class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-zinc-400 hover:bg-zinc-800 dark:hover:bg-[#303134] hover:text-white transition-all duration-200" href="#">
+                    <a class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-[#4b5563] hover:bg-[#f3f4f6] hover:text-[#111827] transition-all duration-200" href="#">
                         <span class="material-symbols-outlined" data-icon="groups">groups</span>
                         <span>Team</span>
                     </a>
 
-                    <a class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-zinc-400 hover:bg-zinc-800 dark:hover:bg-[#303134] hover:text-white transition-all duration-200" href="#">
+                    <a class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-[#4b5563] hover:bg-[#f3f4f6] hover:text-[#111827] transition-all duration-200" href="#">
                         <span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
                         <span>Resources</span>
                     </a>
@@ -101,12 +101,12 @@
             </nav>
 
             <div class="px-2 mt-auto">
-                <a class="flex items-center gap-3 px-4 py-2 rounded-lg text-zinc-400 hover:bg-zinc-800 dark:hover:bg-[#303134] hover:text-white" href="#">
+                <a class="flex items-center gap-3 px-4 py-2 rounded-lg text-[#4b5563] hover:bg-[#f3f4f6] hover:text-[#111827]" href="#">
                     <span class="material-symbols-outlined" data-icon="delete">delete</span>
                     <span>Trash</span>
                 </a>
 
-                <a class="flex items-center gap-3 px-4 py-2 rounded-lg text-zinc-400 hover:bg-zinc-800 dark:hover:bg-[#303134] hover:text-white" href="#">
+                <a class="flex items-center gap-3 px-4 py-2 rounded-lg text-[#4b5563] hover:bg-[#f3f4f6] hover:text-[#111827]" href="#">
                     <span class="material-symbols-outlined" data-icon="archive">archive</span>
                     <span>Archive</span>
                 </a>

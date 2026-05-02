@@ -72,7 +72,7 @@
 
 <!DOCTYPE html>
 
-<html class="dark" lang="en">
+<html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
@@ -89,7 +89,7 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #131313;
+            background-color: #f5f7fb;
         }
 
         ::-webkit-scrollbar {
@@ -98,16 +98,16 @@
         }
 
         ::-webkit-scrollbar-track {
-            background: #131313;
+            background: #f8fafc;
         }
 
         ::-webkit-scrollbar-thumb {
-            background: #3c4043;
+            background: #cbd5e1;
             border-radius: 4px;
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background: #4f5256;
+            background: #94a3b8;
         }
 
         .calendar-cell:hover {
@@ -145,57 +145,56 @@
 
     <script id="tailwind-config">
         tailwind.config = {
-            darkMode: "class",
             theme: {
                 extend: {
                     "colors": {
-                        "surface-tint": "#adc7ff",
-                        "primary-container": "#1a73e8",
-                        "surface-container-low": "#1c1b1b",
+                        "surface-tint": "#2563eb",
+                        "primary-container": "#2563eb",
+                        "surface-container-low": "#f8fafc",
                         "on-primary-fixed": "#001a41",
-                        "tertiary-container": "#76767a",
-                        "outline": "#8b909f",
+                        "tertiary-container": "#e5e7eb",
+                        "outline": "#94a3b8",
                         "on-secondary-fixed-variant": "#41474d",
-                        "on-background": "#e5e2e1",
+                        "on-background": "#111827",
                         "inverse-on-surface": "#313030",
                         "primary-fixed": "#d8e2ff",
                         "secondary-fixed-dim": "#c1c7cd",
                         "on-tertiary-fixed": "#1a1c1e",
                         "tertiary-fixed-dim": "#c7c6ca",
-                        "secondary-container": "#41474d",
-                        "on-surface-variant": "#c1c6d6",
+                        "secondary-container": "#e5e7eb",
+                        "on-surface-variant": "#6b7280",
                         "tertiary-fixed": "#e3e2e6",
                         "inverse-primary": "#005bc0",
-                        "error": "#ffb4ab",
-                        "surface-container-lowest": "#0e0e0e",
-                        "surface-container-highest": "#353534",
+                        "error": "#dc2626",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-highest": "#e5e7eb",
                         "on-tertiary-fixed-variant": "#46474a",
-                        "surface-container": "#201f1f",
-                        "outline-variant": "#414754",
-                        "surface-dim": "#131313",
+                        "surface-container": "#f8fafc",
+                        "outline-variant": "#e5e7eb",
+                        "surface-dim": "#f5f7fb",
                         "secondary-fixed": "#dde3e9",
-                        "on-error-container": "#ffdad6",
-                        "on-secondary-container": "#b0b6bc",
-                        "surface-bright": "#393939",
-                        "on-tertiary-container": "#ffffff",
+                        "on-error-container": "#991b1b",
+                        "on-secondary-container": "#374151",
+                        "surface-bright": "#ffffff",
+                        "on-tertiary-container": "#111827",
                         "on-secondary": "#2b3136",
                         "on-primary-container": "#ffffff",
-                        "surface-container-high": "#2a2a2a",
+                        "surface-container-high": "#ffffff",
                         "on-primary-fixed-variant": "#004493",
                         "on-primary": "#002e68",
-                        "on-surface": "#e5e2e1",
+                        "on-surface": "#111827",
                         "on-error": "#690005",
-                        "error-container": "#93000a",
-                        "background": "#131313",
+                        "error-container": "#fee2e2",
+                        "background": "#f5f7fb",
                         "on-tertiary": "#2f3033",
-                        "inverse-surface": "#e5e2e1",
+                        "inverse-surface": "#111827",
                         "tertiary": "#c7c6ca",
-                        "primary": "#adc7ff",
-                        "surface": "#131313",
-                        "primary-fixed-dim": "#adc7ff",
+                        "primary": "#2563eb",
+                        "surface": "#ffffff",
+                        "primary-fixed-dim": "#bfdbfe",
                         "on-secondary-fixed": "#161c21",
                         "secondary": "#c1c7cd",
-                        "surface-variant": "#353534"
+                        "surface-variant": "#f3f4f6"
                     },
                     "borderRadius": {
                         "DEFAULT": "0.25rem",
@@ -237,9 +236,9 @@
 
     @if (!string.IsNullOrWhiteSpace(Model.SuccessMessage))
     {
-        <div class="calendar-alert fixed top-20 right-20 z-[999] px-4 py-3 rounded-lg bg-green-900/90 text-green-200 border border-green-700 shadow-xl flex items-center gap-3">
+        <div class="calendar-alert fixed top-20 right-20 z-[999] px-4 py-3 rounded-lg bg-green-50 text-green-800 border border-green-200 shadow-lg flex items-center gap-3">
             <span>@Model.SuccessMessage</span>
-            <button type="button" class="text-green-100 hover:text-white" onclick="this.closest('.calendar-alert')?.remove()">
+            <button type="button" class="text-green-700 hover:text-green-900" onclick="this.closest('.calendar-alert')?.remove()">
                 <span class="material-symbols-outlined text-base">close</span>
             </button>
         </div>
@@ -247,23 +246,23 @@
 
     @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
     {
-        <div class="calendar-alert fixed top-20 right-20 z-[999] px-4 py-3 rounded-lg bg-red-900/90 text-red-200 border border-red-700 shadow-xl flex items-center gap-3">
+        <div class="calendar-alert fixed top-20 right-20 z-[999] px-4 py-3 rounded-lg bg-red-50 text-red-800 border border-red-200 shadow-lg flex items-center gap-3">
             <span>@Model.ErrorMessage</span>
-            <button type="button" class="text-red-100 hover:text-white" onclick="this.closest('.calendar-alert')?.remove()">
+            <button type="button" class="text-red-700 hover:text-red-900" onclick="this.closest('.calendar-alert')?.remove()">
                 <span class="material-symbols-outlined text-base">close</span>
             </button>
         </div>
     }
 
-    <header class="flex justify-between items-center px-4 h-16 w-full bg-[#1F1F1F] dark:bg-gray-900 border-b border-[#3C4043] dark:border-gray-800 font-inter text-sm antialiased sticky top-0 z-50">
+    <header class="flex justify-between items-center px-4 h-16 w-full bg-white border-b border-[#e5e7eb] font-inter text-sm antialiased sticky top-0 z-50 shadow-sm">
         <div class="flex items-center gap-4">
-            <button id="sidebarToggle" onclick="toggleSidebar()" class="p-2 hover:bg-[#303134] dark:hover:bg-gray-800 transition-colors rounded-full cursor-pointer">
-                <span class="material-symbols-outlined text-white">menu</span>
+            <button id="sidebarToggle" onclick="toggleSidebar()" class="p-2 hover:bg-[#f3f4f6] transition-colors rounded-full cursor-pointer text-[#374151]">
+                <span class="material-symbols-outlined">menu</span>
             </button>
 
             <div class="flex items-center gap-2">
                 <span class="material-symbols-outlined text-[#1A73E8] text-2xl">calendar_today</span>
-                <span class="text-xl font-bold text-white tracking-tight">Chronos</span>
+                <span class="text-xl font-bold text-[#111827] tracking-tight">Chronos</span>
             </div>
 
             <div class="flex items-center gap-1 ml-6">
@@ -272,7 +271,7 @@
                    asp-route-weekStart="@todayWeekStart.ToString("yyyy-MM-dd")"
                    asp-route-selectedDate="@DateTime.Today.ToString("yyyy-MM-dd")"
                    asp-route-viewMode="@currentMode"
-                   class="px-4 py-2 border border-[#3C4043] text-on-surface rounded font-medium hover:bg-[#303134] transition-colors">
+                   class="px-4 py-2 border border-[#d1d5db] text-[#1f2937] rounded-lg font-medium hover:bg-[#f3f4f6] transition-colors">
                     Today
                 </a>
 
@@ -282,7 +281,7 @@
                        asp-route-weekStart="@previousWeekRoute.ToString("yyyy-MM-dd")"
                        asp-route-selectedDate="@previousSelectedDate.ToString("yyyy-MM-dd")"
                        asp-route-viewMode="@currentMode"
-                       class="p-2 hover:bg-[#303134] transition-colors rounded-full">
+                       class="p-2 hover:bg-[#f3f4f6] text-[#374151] transition-colors rounded-full">
                         <span class="material-symbols-outlined">chevron_left</span>
                     </a>
 
@@ -291,12 +290,12 @@
                        asp-route-weekStart="@nextWeekRoute.ToString("yyyy-MM-dd")"
                        asp-route-selectedDate="@nextSelectedDate.ToString("yyyy-MM-dd")"
                        asp-route-viewMode="@currentMode"
-                       class="p-2 hover:bg-[#303134] transition-colors rounded-full">
+                       class="p-2 hover:bg-[#f3f4f6] text-[#374151] transition-colors rounded-full">
                         <span class="material-symbols-outlined">chevron_right</span>
                     </a>
                 </div>
 
-                <h1 class="text-display-date font-display-date ml-4">
+                <h1 class="text-display-date font-display-date ml-4 text-[#111827]">
                     @headerTitle
                 </h1>
             </div>
@@ -314,7 +313,7 @@
 
                 <input name="q"
                        value="@Model.SearchQuery"
-                       class="w-full bg-[#303134] border-none rounded-lg py-2.5 pl-10 pr-4 text-on-surface focus:ring-2 focus:ring-primary-container"
+                       class="w-full bg-[#f8fafc] border border-[#e5e7eb] rounded-lg py-2.5 pl-10 pr-4 text-[#111827] placeholder:text-[#6b7280] focus:ring-2 focus:ring-primary-container focus:border-primary-container"
                        placeholder="Search"
                        type="text" />
             </div>
@@ -324,7 +323,7 @@
             <div class="relative">
                 <button id="notificationButton"
                         type="button"
-                        class="p-2 hover:bg-[#303134] transition-colors rounded-full relative">
+                        class="p-2 hover:bg-[#f3f4f6] text-[#374151] transition-colors rounded-full relative">
                     <span class="material-symbols-outlined">notifications</span>
                     <span id="notificationBadge"
                           class="absolute -top-1 -right-1 text-[10px] bg-red-500 text-white rounded-full px-1.5 py-0.5 @(Model.UnreadNotificationCount > 0 ? "" : "hidden")">
@@ -333,8 +332,8 @@
                 </button>
 
                 <div id="notificationDropdown"
-                     class="hidden absolute right-0 mt-2 w-80 bg-[#1F1F1F] border border-[#3C4043] rounded-lg shadow-xl overflow-hidden z-50">
-                    <div class="px-4 py-2 border-b border-[#3C4043] text-sm font-semibold text-on-surface">
+                     class="hidden absolute right-0 mt-2 w-80 bg-white border border-[#e5e7eb] rounded-lg shadow-xl overflow-hidden z-50">
+                    <div class="px-4 py-2 border-b border-[#e5e7eb] text-sm font-semibold text-[#111827]">
                         Notifications
                     </div>
                     <div id="notificationList" class="max-h-72 overflow-y-auto">
@@ -344,7 +343,7 @@
                             {
                                 <button type="button"
                                         data-id="@notification.NotificationId"
-                                        class="notification-item w-full text-left px-4 py-3 border-b border-[#3C4043] hover:bg-[#303134] transition-colors @(notification.IsRead ? "text-on-surface-variant" : "text-on-surface")">
+                                        class="notification-item w-full text-left px-4 py-3 border-b border-[#e5e7eb] hover:bg-[#f8fafc] transition-colors @(notification.IsRead ? "text-on-surface-variant" : "text-on-surface")">
                                     <div class="text-sm font-semibold">@notification.Title</div>
                                     <div class="text-xs opacity-80">@notification.Message</div>
                                     <div class="text-[10px] opacity-60 mt-1">@notification.CreatedAt.ToLocalTime().ToString("g")</div>
@@ -363,12 +362,12 @@
 
             <form asp-controller="Auth" asp-action="Logout" method="post" class="ml-2">
                 @Html.AntiForgeryToken()
-                <button type="submit" class="px-3 py-2 rounded-lg bg-[#303134] hover:bg-[#3C4043] text-white">
+                <button type="submit" class="px-3 py-2 rounded-lg border border-[#d1d5db] bg-white hover:bg-[#f3f4f6] text-[#1f2937]">
                     Logout
                 </button>
             </form>
 
-            <div class="ml-2 w-8 h-8 rounded-full overflow-hidden border border-[#3C4043] bg-primary-container flex items-center justify-center">
+            <div class="ml-2 w-8 h-8 rounded-full overflow-hidden border border-[#d1d5db] bg-primary-container flex items-center justify-center">
                 <span class="text-white text-sm font-bold">
                     @(Context.Session.GetString("UserName")?.Substring(0, 1).ToUpper() ?? "U")
                 </span>
@@ -377,10 +376,10 @@
     </header>
 
     <div class="flex flex-1 overflow-hidden">
-        <aside id="sidebar" class="fixed left-0 top-16 h-[calc(100vh-64px)] w-64 transition-transform duration-300 bg-[#1F1F1F] dark:bg-gray-900 border-r border-[#3C4043] dark:border-gray-800 flex flex-col py-4 gap-2 font-inter text-sm font-medium z-40">
+        <aside id="sidebar" class="fixed left-0 top-16 h-[calc(100vh-64px)] w-64 transition-transform duration-300 bg-white border-r border-[#e5e7eb] flex flex-col py-4 gap-2 font-inter text-sm font-medium z-40">
             <div class="px-4 mb-6">
                 <button onclick="openCreateModal()"
-                        class="flex items-center gap-3 bg-white text-gray-900 px-6 py-3.5 rounded-full shadow-lg hover:shadow-xl transition-all font-bold active:opacity-80">
+                        class="flex items-center gap-3 bg-primary-container text-white px-6 py-3.5 rounded-full shadow-lg hover:bg-blue-700 transition-all font-bold active:opacity-80">
                     <span class="material-symbols-outlined font-bold">add</span>
                     <span>Create</span>
                 </button>
@@ -388,29 +387,29 @@
 
             <div class="px-4 mb-8">
                 <div class="flex justify-between items-center mb-4 px-2">
-                    <span class="font-bold text-white">@Model.WeekStart.ToString("MMMM yyyy")</span>
+                    <span class="font-bold text-[#111827]">@Model.WeekStart.ToString("MMMM yyyy")</span>
 
                     <div class="flex gap-1">
                         <a asp-controller="Calendar"
                            asp-action="Index"
                            asp-route-weekStart="@Model.PreviousWeekStart.ToString("yyyy-MM-dd")"
-                           class="material-symbols-outlined text-sm cursor-pointer hover:bg-gray-800 rounded p-1">chevron_left</a>
+                           class="material-symbols-outlined text-sm text-[#374151] cursor-pointer hover:bg-[#f3f4f6] rounded p-1">chevron_left</a>
 
                         <a asp-controller="Calendar"
                            asp-action="Index"
                            asp-route-weekStart="@Model.NextWeekStart.ToString("yyyy-MM-dd")"
-                           class="material-symbols-outlined text-sm cursor-pointer hover:bg-gray-800 rounded p-1">chevron_right</a>
+                           class="material-symbols-outlined text-sm text-[#374151] cursor-pointer hover:bg-[#f3f4f6] rounded p-1">chevron_right</a>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-7 text-center gap-y-2">
-                    <div class="text-[10px] text-[#9AA0A6]">S</div>
-                    <div class="text-[10px] text-[#9AA0A6]">M</div>
-                    <div class="text-[10px] text-[#9AA0A6]">T</div>
-                    <div class="text-[10px] text-[#9AA0A6]">W</div>
-                    <div class="text-[10px] text-[#9AA0A6]">T</div>
-                    <div class="text-[10px] text-[#9AA0A6]">F</div>
-                    <div class="text-[10px] text-[#9AA0A6]">S</div>
+                    <div class="text-[10px] text-[#6b7280]">S</div>
+                    <div class="text-[10px] text-[#6b7280]">M</div>
+                    <div class="text-[10px] text-[#6b7280]">T</div>
+                    <div class="text-[10px] text-[#6b7280]">W</div>
+                    <div class="text-[10px] text-[#6b7280]">T</div>
+                    <div class="text-[10px] text-[#6b7280]">F</div>
+                    <div class="text-[10px] text-[#6b7280]">S</div>
 
                     @for (var i = 0; i < 35; i++)
                     {
@@ -422,7 +421,7 @@
                         <a asp-controller="Calendar"
                            asp-action="Index"
                            asp-route-weekStart="@miniWeekStart.ToString("yyyy-MM-dd")"
-                           class="text-xs py-1 @(isCurrentMonth ? "hover:bg-gray-800 rounded-full cursor-pointer" : "text-gray-600") @(isToday ? "bg-primary-container text-white rounded-full" : "")">
+                           class="text-xs py-1 text-[#374151] @(isCurrentMonth ? "hover:bg-[#eef2ff] rounded-full cursor-pointer" : "text-gray-400") @(isToday ? "bg-primary-container text-white rounded-full" : "")">
                             @miniDay.Day
                         </a>
                     }
@@ -435,7 +434,7 @@
                    asp-route-weekStart="@selectedWeekStart.ToString("yyyy-MM-dd")"
                    asp-route-selectedDate="@selectedDate.ToString("yyyy-MM-dd")"
                    asp-route-viewMode="week"
-                   class="flex items-center gap-3 px-6 py-2 transition-all duration-200 @(isWeekView ? "bg-[#1A73E8]/20 text-[#1A73E8] rounded-r-full border-l-4 border-[#1A73E8]" : "text-[#9AA0A6] dark:text-gray-400 hover:text-white hover:bg-[#303134] rounded-lg")">
+                   class="flex items-center gap-3 px-6 py-2 transition-all duration-200 @(isWeekView ? "bg-[#dbeafe] text-[#1d4ed8] rounded-r-full border-l-4 border-[#2563eb]" : "text-[#4b5563] hover:text-[#111827] hover:bg-[#f3f4f6] rounded-lg")">
                     <span class="material-symbols-outlined">calendar_view_week</span>
                     <span>Week</span>
                 </a>
@@ -445,7 +444,7 @@
                    asp-route-weekStart="@selectedWeekStart.ToString("yyyy-MM-dd")"
                    asp-route-selectedDate="@selectedDate.ToString("yyyy-MM-dd")"
                    asp-route-viewMode="day"
-                   class="flex items-center gap-3 px-6 py-2 transition-all duration-200 @(isDayView ? "bg-[#1A73E8]/20 text-[#1A73E8] rounded-r-full border-l-4 border-[#1A73E8]" : "text-[#9AA0A6] dark:text-gray-400 hover:text-white hover:bg-[#303134] rounded-lg")">
+                   class="flex items-center gap-3 px-6 py-2 transition-all duration-200 @(isDayView ? "bg-[#dbeafe] text-[#1d4ed8] rounded-r-full border-l-4 border-[#2563eb]" : "text-[#4b5563] hover:text-[#111827] hover:bg-[#f3f4f6] rounded-lg")">
                     <span class="material-symbols-outlined">calendar_view_day</span>
                     <span>Day</span>
                 </a>
@@ -455,7 +454,7 @@
                    asp-route-weekStart="@selectedWeekStart.ToString("yyyy-MM-dd")"
                    asp-route-selectedDate="@selectedDate.ToString("yyyy-MM-dd")"
                    asp-route-viewMode="month"
-                   class="flex items-center gap-3 px-6 py-2 transition-all duration-200 @(isMonthView ? "bg-[#1A73E8]/20 text-[#1A73E8] rounded-r-full border-l-4 border-[#1A73E8]" : "text-[#9AA0A6] dark:text-gray-400 hover:text-white hover:bg-[#303134] rounded-lg")">
+                   class="flex items-center gap-3 px-6 py-2 transition-all duration-200 @(isMonthView ? "bg-[#dbeafe] text-[#1d4ed8] rounded-r-full border-l-4 border-[#2563eb]" : "text-[#4b5563] hover:text-[#111827] hover:bg-[#f3f4f6] rounded-lg")">
                     <span class="material-symbols-outlined">calendar_view_month</span>
                     <span>Month</span>
                 </a>
@@ -468,22 +467,22 @@
 
                     <div class="flex flex-col gap-3">
                         <label class="flex items-center gap-3 cursor-pointer">
-                            <input checked class="w-4 h-4 rounded border-[#3C4043] bg-transparent text-[#1A73E8] focus:ring-0 focus:ring-offset-0" type="checkbox" />
+                            <input checked class="w-4 h-4 rounded border-[#d1d5db] bg-white text-[#2563eb] focus:ring-0 focus:ring-offset-0" type="checkbox" />
                             <span class="text-xs text-on-surface">
                                 @(Context.Session.GetString("UserName") ?? "My Calendar")
                             </span>
                         </label>
 
                         <label class="flex items-center gap-3 cursor-pointer">
-                            <input checked class="w-4 h-4 rounded border-[#3C4043] bg-transparent text-[#34A853] focus:ring-0 focus:ring-offset-0" type="checkbox" />
+                            <input checked class="w-4 h-4 rounded border-[#d1d5db] bg-white text-[#16a34a] focus:ring-0 focus:ring-offset-0" type="checkbox" />
                             <span class="text-xs text-on-surface">Group Meetings</span>
                         </label>
 
                     </div>
                 </div>
 
-                <div class="mt-auto pt-4 border-t border-[#3C4043] mx-4 mb-4">
-                    <div class="flex items-center gap-3 px-2 py-2 text-[#9AA0A6] dark:text-gray-400 hover:text-white hover:bg-[#303134] rounded-lg transition-all duration-200 cursor-pointer">
+                <div class="mt-auto pt-4 border-t border-[#e5e7eb] mx-4 mb-4">
+                    <div class="flex items-center gap-3 px-2 py-2 text-[#4b5563] hover:text-[#111827] hover:bg-[#f3f4f6] rounded-lg transition-all duration-200 cursor-pointer">
                         <span class="material-symbols-outlined">settings</span>
                         <span>Settings</span>
                     </div>
@@ -494,16 +493,16 @@
                 <main id="calendarMain" class="flex-1 ml-64 transition-all duration-300 overflow-y-auto bg-surface-dim relative">
             @if (isMonthView)
             {
-                <div class="sticky top-0 z-30 bg-surface-dim border-b border-[#3C4043] grid grid-cols-7">
+                <div class="sticky top-0 z-30 bg-white border-b border-[#e5e7eb] grid grid-cols-7">
                     @foreach (var dayName in new[] { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" })
                     {
-                        <div class="py-3 text-center border-r border-[#3C4043] text-label-caps text-on-surface-variant uppercase">
+                        <div class="py-3 text-center border-r border-[#e5e7eb] text-label-caps text-[#374151] uppercase">
                             @dayName
                         </div>
                     }
                 </div>
 
-                <div class="grid grid-cols-7 border-l border-t border-[#3C4043]">
+                <div class="grid grid-cols-7 border-l border-t border-[#e5e7eb] bg-white">
                     @foreach (var cellDate in monthCells)
                     {
                         var isCurrentMonthCell = cellDate.Month == selectedDate.Month;
@@ -517,20 +516,20 @@
                         var defaultStart = cellDate.Date.AddHours(9);
                         var defaultEnd = defaultStart.AddHours(1);
 
-                        <div class="min-h-[140px] border-r border-b border-[#3C4043] p-2 calendar-cell @(isCurrentMonthCell ? "" : "bg-surface-container-low/40 text-gray-600")"
+                        <div class="min-h-[140px] border-r border-b border-[#e5e7eb] p-2 calendar-cell @(isCurrentMonthCell ? "bg-white" : "bg-[#f8fafc] text-gray-400")"
                              data-start="@defaultStart.ToString("yyyy-MM-ddTHH:mm")"
                              data-end="@defaultEnd.ToString("yyyy-MM-ddTHH:mm")"
                              onclick="openCreateModalWithTime(this)">
                             <div class="flex items-center justify-between mb-2">
                                 @if (isTodayCell)
                                 {
-                                    <div class="w-8 h-8 rounded-full bg-primary-container text-white flex items-center justify-center text-sm font-semibold">
+                                    <div class="w-8 h-8 rounded-full bg-[#dbeafe] border border-[#93c5fd] text-[#1d4ed8] flex items-center justify-center text-sm font-semibold">
                                         @cellDate.Day
                                     </div>
                                 }
                                 else
                                 {
-                                    <div class="text-sm @(isCurrentMonthCell ? "text-white" : "text-gray-500")">
+                                    <div class="text-sm @(isCurrentMonthCell ? "text-[#374151]" : "text-gray-400")">
                                         @cellDate.Day
                                     </div>
                                 }
@@ -539,7 +538,7 @@
                             <div class="space-y-1">
                                 @foreach (var appt in dayAppointments)
                                 {
-                                    <div class="px-2 py-1 rounded bg-[#1A73E8]/30 border-l-4 border-[#1A73E8] text-[11px] truncate"
+                                    <div class="px-2 py-1 rounded-lg bg-[#dbeafe] border border-[#bfdbfe] border-l-4 border-l-[#2563eb] text-[#1e3a8a] text-[11px] truncate shadow-sm"
                                          title="@appt.Title - @appt.TimeText"
                                          onclick="event.stopPropagation(); openAppointmentDetails('@appt.AppointmentId')">
                                         <div class="font-semibold truncate">@appt.Title</div>
@@ -557,8 +556,8 @@
                 const int topMetaRowHeight = 36;
                 var isSingleDay = isDayView;
 
-                <div class="sticky top-0 z-30 bg-surface-dim border-b border-[#3C4043] flex min-w-full">
-                    <div class="w-16 flex-shrink-0 border-r border-[#3C4043]"></div>
+                <div class="sticky top-0 z-30 bg-white border-b border-[#e5e7eb] flex min-w-full">
+                    <div class="w-16 flex-shrink-0 border-r border-[#e5e7eb]"></div>
 
                     <div class="flex-1 grid @(isSingleDay ? "grid-cols-1" : "grid-cols-7")">
                         @for (var i = 0; i < timelineDays.Count; i++)
@@ -566,14 +565,14 @@
                             var day = timelineDays[i];
                             var isToday = day.Date == DateTime.Today;
 
-                            <div class="py-3 text-center border-r border-[#3C4043] @(isToday ? "bg-primary-container/10" : "")">
+                            <div class="py-3 text-center border-r border-[#e5e7eb] @(isToday ? "bg-[#eff6ff]" : "")">
                                 <div class="text-label-caps font-label-caps @(isToday ? "text-primary-container font-bold" : "text-on-surface-variant") uppercase">
                                     @day.ToString("ddd")
                                 </div>
 
                                 @if (isToday)
                                 {
-                                    <div class="text-grid-number font-grid-number bg-primary-container text-white w-10 h-10 flex items-center justify-center rounded-full mx-auto">
+                                    <div class="text-grid-number font-grid-number bg-[#dbeafe] border border-[#93c5fd] text-[#1d4ed8] w-10 h-10 flex items-center justify-center rounded-full mx-auto">
                                         @day.Day
                                     </div>
                                 }
@@ -590,25 +589,25 @@
 
                 <div class="flex min-w-full relative">
                     <div class="w-16 flex-shrink-0 flex flex-col">
-                        <div class="border-r border-[#3C4043] relative"
+                        <div class="border-r border-[#e5e7eb] relative bg-white"
                              style="height:@(topMetaRowHeight)px;">
-                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[10px] text-[#9AA0A6] font-medium">
+                             <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[10px] text-[#6b7280] font-medium">
                                 GMT+07
                             </span>
                         </div>
 
                         @for (int i = 0; i < Model.TimeSlots.Count; i++)
                         {
-                            <div class="relative border-r border-[#3C4043]"
+                            <div class="relative border-r border-[#e5e7eb] bg-white"
                                  style="height:@(hourRowHeight)px;">
-                                <span class="absolute right-2 top-0 -translate-y-1/2 bg-[#131313] px-1 text-[10px] leading-none text-[#9AA0A6]">
+                                <span class="absolute right-2 top-0 -translate-y-1/2 bg-white px-1 text-[10px] leading-none text-[#6b7280]">
                                     @Model.TimeSlots[i]
                                 </span>
                             </div>
                         }
                     </div>
 
-                    <div class="flex-1 grid @(isSingleDay ? "grid-cols-1" : "grid-cols-7") divide-x divide-[#3C4043]">
+                    <div class="flex-1 grid @(isSingleDay ? "grid-cols-1" : "grid-cols-7") divide-x divide-[#e5e7eb] bg-white">
                         @for (var dayIndex = 0; dayIndex < timelineDays.Count; dayIndex++)
                         {
                             var day = timelineDays[dayIndex];
@@ -619,8 +618,8 @@
                                 .OrderBy(x => x.StartTime)
                                 .ToList();
 
-                            <div class="relative @(isToday ? "bg-primary-container/5" : isWeekend ? "bg-surface-container-low/30" : "")">
-                                <div class="border-b border-[#3C4043]"
+                            <div class="relative @(isToday ? "bg-[#eff6ff]" : isWeekend ? "bg-[#f8fafc]" : "bg-white")">
+                                <div class="border-b border-[#e5e7eb]"
                                      style="height:@(topMetaRowHeight)px;">
                                 </div>
 
@@ -629,7 +628,7 @@
                                     var slotHour = 1 + slotIndex;
                                     var hourStart = day.Date.AddHours(slotHour);
 
-                                    <div class="relative border-b border-[#3C4043]/30"
+                                    <div class="relative border-b border-[#e5e7eb]"
                                          style="height:@(hourRowHeight)px;">
                                         @for (int quarterIndex = 0; quarterIndex < 4; quarterIndex++)
                                         {
@@ -672,7 +671,7 @@
                                     var topPx = topMetaRowHeight + (startMinutes * hourRowHeight / 60);
                                     var heightPx = Math.Max(32, durationMinutes * hourRowHeight / 60);
 
-                                    <div class="absolute left-1 right-1 bg-[#1A73E8]/30 border-l-4 border-[#1A73E8] rounded p-2 z-10 cursor-pointer hover:brightness-110 overflow-hidden"
+                                    <div class="absolute left-1 right-1 @(item.IsGroupMeeting ? "bg-[#dcfce7] border-[#bbf7d0] border-l-[#16a34a] text-[#14532d]" : "bg-[#dbeafe] border-[#bfdbfe] border-l-[#2563eb] text-[#1e3a8a]") border border-l-4 rounded-lg p-2 z-10 cursor-pointer hover:brightness-105 overflow-hidden shadow-sm"
                                          style="top:@(topPx)px; height:@(heightPx)px;"
                                          title="@item.Title - @item.TimeText"
                                          onclick="event.stopPropagation(); openAppointmentDetails('@item.AppointmentId')">
@@ -709,7 +708,7 @@
     </div>
 
     <div id="createModal"
-         class="fixed inset-0 bg-background/80 backdrop-blur-sm z-[100] items-center justify-center p-4 @(Model.ShowCreateModal || Model.ConflictAppointment != null || Model.MatchingGroupMeeting != null ? "flex" : "hidden")">
+         class="fixed inset-0 bg-[#64748b]/20 backdrop-blur-sm z-[100] items-center justify-center p-4 @(Model.ShowCreateModal || Model.ConflictAppointment != null || Model.MatchingGroupMeeting != null ? "flex" : "hidden")">
 
         <div class="w-full max-w-2xl bg-surface-container-high rounded-xl border border-outline-variant shadow-2xl overflow-hidden flex flex-col">
             <div class="p-6 border-b border-outline-variant flex justify-between items-center">
@@ -954,7 +953,7 @@
     </div>
 
     <div id="appointmentDetailsModal"
-         class="fixed inset-0 bg-background/80 backdrop-blur-sm z-[110] hidden items-center justify-center p-4">
+         class="fixed inset-0 bg-[#64748b]/20 backdrop-blur-sm z-[110] hidden items-center justify-center p-4">
         <div class="w-full max-w-2xl bg-surface-container-high rounded-xl border border-outline-variant shadow-2xl overflow-hidden">
             <div class="p-5 border-b border-outline-variant flex justify-between items-center">
                 <h2 id="appointmentDetailsTitle" class="font-display-date text-display-date text-on-surface">
@@ -1162,7 +1161,7 @@
                 const button = document.createElement("button");
                 button.type = "button";
                 button.dataset.id = item.notificationId;
-                button.className = `notification-item w-full text-left px-4 py-3 border-b border-[#3C4043] hover:bg-[#303134] transition-colors ${item.isRead ? "text-on-surface-variant" : "text-on-surface"}`;
+                button.className = `notification-item w-full text-left px-4 py-3 border-b border-[#e5e7eb] hover:bg-[#f8fafc] transition-colors ${item.isRead ? "text-on-surface-variant" : "text-on-surface"}`;
                 button.innerHTML = `
                     <div class="text-sm font-semibold">${item.title}</div>
                     <div class="text-xs opacity-80">${item.message}</div>
@@ -1403,7 +1402,7 @@
             connection.on("NotificationReceived", payload => {
                 updateBadge(payload.unreadCount);
                 const toast = document.createElement("div");
-                toast.className = "fixed bottom-6 right-6 bg-[#1F1F1F] border border-[#3C4043] text-on-surface px-4 py-3 rounded-lg shadow-lg z-50";
+                toast.className = "fixed bottom-6 right-6 bg-white border border-[#d1d5db] text-[#111827] px-4 py-3 rounded-lg shadow-lg z-50";
                 toast.innerHTML = `<div class="font-semibold">${payload.title}</div><div class="text-sm opacity-80">${payload.message}</div>`;
                 document.body.appendChild(toast);
                 setTimeout(() => toast.remove(), 5000);
