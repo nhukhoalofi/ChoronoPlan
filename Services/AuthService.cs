@@ -12,17 +12,20 @@ public class AuthService : IAuthService
     private readonly PasswordHasher _passwordHasher;
     private readonly IEmailSender _emailSender;
     private readonly IConfiguration _configuration;
+    private readonly ILogger<AuthService> _logger;
 
     public AuthService(
         AppDbContext db,
         PasswordHasher passwordHasher,
         IEmailSender emailSender,
-        IConfiguration configuration)
+        IConfiguration configuration,
+        ILogger<AuthService> logger)
     {
         _db = db;
         _passwordHasher = passwordHasher;
         _emailSender = emailSender;
         _configuration = configuration;
+        _logger = logger;
     }
 
     public async Task<(bool Success, string Message)> RegisterAsync(RegisterViewModel model)
@@ -34,10 +37,40 @@ public class AuthService : IAuthService
             return (false, "Vui lòng đăng ký bằng tài khoản Gmail.");
         }
 
-        var exists = await _db.Users.AnyAsync(x => x.Email == email);
-        if (exists)
+        var existingUser = await _db.Users.FirstOrDefaultAsync(x => x.Email == email);
+        if (existingUser != null)
         {
-            return (false, "Email này đã được sử dụng.");
+            if (existingUser.IsEmailVerified)
+            {
+                return (false, "Email này đã được sử dụng.");
+            }
+
+            var resendOtp = GenerateOtp();
+            var resendOtpMinutes = _configuration.GetValue<int>("AppSettings:OtpMinutes", 10);
+
+            existingUser.Name = model.Name.Trim();
+            existingUser.PhoneNumber = model.PhoneNumber;
+            existingUser.PasswordHash = _passwordHasher.Hash(model.Password);
+            existingUser.RegisterOtpHash = _passwordHasher.Hash(resendOtp);
+            existingUser.RegisterOtpExpiresAt = DateTime.UtcNow.AddMinutes(resendOtpMinutes);
+
+            await _db.SaveChangesAsync();
+
+            try
+            {
+                await _emailSender.SendAsync(
+                    email,
+                    "ChronoPlan - Verify your account",
+                    BuildOtpEmail("Verify your ChronoPlan account", resendOtp)
+                );
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to resend registration OTP email to {Email}", email);
+                return (false, "Không gửi được OTP qua Gmail. Vui lòng kiểm tra cấu hình SMTP và thử lại.");
+            }
+
+            return (true, "OTP xác thực đã được gửi lại. Vui lòng kiểm tra Gmail.");
         }
 
         var otp = GenerateOtp();
@@ -64,11 +97,24 @@ public class AuthService : IAuthService
 
         await _db.SaveChangesAsync();
 
-        await _emailSender.SendAsync(
-            email,
-            "ChronoPlan - Verify your account",
-            BuildOtpEmail("Verify your ChronoPlan account", otp)
-        );
+        try
+        {
+            await _emailSender.SendAsync(
+                email,
+                "ChronoPlan - Verify your account",
+                BuildOtpEmail("Verify your ChronoPlan account", otp)
+            );
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to send registration OTP email to {Email}", email);
+
+            _db.Calendars.Remove(calendar);
+            _db.Users.Remove(user);
+            await _db.SaveChangesAsync();
+
+            return (false, "Không gửi được OTP qua Gmail. Vui lòng kiểm tra cấu hình SMTP và thử lại.");
+        }
 
         return (true, "Đăng ký thành công. Vui lòng kiểm tra Gmail để lấy OTP.");
     }
