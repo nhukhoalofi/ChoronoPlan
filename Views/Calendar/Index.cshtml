@@ -378,7 +378,7 @@
     <div class="flex flex-1 overflow-hidden">
         <aside id="sidebar" class="fixed left-0 top-16 h-[calc(100vh-64px)] w-64 transition-transform duration-300 bg-white border-r border-[#e5e7eb] flex flex-col py-4 gap-2 font-inter text-sm font-medium z-40">
             <div class="px-4 mb-6">
-                <button onclick="openCreateModal()"
+                <button onclick="clickAddAppointment()"
                         class="flex items-center gap-3 bg-primary-container text-white px-6 py-3.5 rounded-full shadow-lg hover:bg-blue-700 transition-all font-bold active:opacity-80">
                     <span class="material-symbols-outlined font-bold">add</span>
                     <span>Create</span>
@@ -519,7 +519,7 @@
                         <div class="min-h-[140px] border-r border-b border-[#e5e7eb] p-2 calendar-cell @(isCurrentMonthCell ? "bg-white" : "bg-[#f8fafc] text-gray-400")"
                              data-start="@defaultStart.ToString("yyyy-MM-ddTHH:mm")"
                              data-end="@defaultEnd.ToString("yyyy-MM-ddTHH:mm")"
-                             onclick="openCreateModalWithTime(this)">
+                             onclick="displayAddAppointmentWindow(this)">
                             <div class="flex items-center justify-between mb-2">
                                 @if (isTodayCell)
                                 {
@@ -1207,7 +1207,7 @@
             setTimeout(() => alertElement.remove(), 10000);
         });
 
-        function formatDetailDateTime(value) {
+        function showSuccess(value) {
             if (!value) return "";
             const date = new Date(value);
             if (Number.isNaN(date.getTime())) return value;
@@ -1224,7 +1224,7 @@
 
         let currentAppointmentDetails = null;
 
-        function toDateTimeLocalValue(value) {
+        function getDateTime(value) {
             if (!value) return "";
 
             const date = new Date(value);
@@ -1246,8 +1246,8 @@
             currentAppointmentDetails = details;
 
             document.getElementById("appointmentDetailsTitle").textContent = details.title || "Appointment";
-            document.getElementById("appointmentDetailsStart").textContent = formatDetailDateTime(details.startTime);
-            document.getElementById("appointmentDetailsEnd").textContent = formatDetailDateTime(details.endTime);
+            document.getElementById("appointmentDetailsStart").textContent = showSuccess(details.startTime);
+            document.getElementById("appointmentDetailsEnd").textContent = showSuccess(details.endTime);
             document.getElementById("appointmentDetailsLocation").textContent = details.location || "No location";
             document.getElementById("appointmentDetailsEditButton")?.classList.toggle("hidden", !details.canEdit);
 
@@ -1272,7 +1272,7 @@
 
                         const meta = document.createElement("div");
                         meta.className = "text-xs text-on-surface-variant mt-0.5";
-                        meta.textContent = `${participant.email} - Joined ${formatDetailDateTime(participant.joinedAt)}`;
+                        meta.textContent = `${participant.email} - Joined ${showSuccess(participant.joinedAt)}`;
 
                         row.appendChild(name);
                         row.appendChild(meta);
@@ -1310,8 +1310,8 @@
             document.getElementById("editAppointmentId").value = currentAppointmentDetails.appointmentId || "";
             document.getElementById("editTitle").value = currentAppointmentDetails.title || "";
             document.getElementById("editLocation").value = currentAppointmentDetails.location || "";
-            document.getElementById("editStartTime").value = toDateTimeLocalValue(currentAppointmentDetails.startTime);
-            document.getElementById("editEndTime").value = toDateTimeLocalValue(currentAppointmentDetails.endTime);
+            document.getElementById("editStartTime").value = getDateTime(currentAppointmentDetails.startTime);
+            document.getElementById("editEndTime").value = getDateTime(currentAppointmentDetails.endTime);
 
             const isGroupMeeting = Boolean(currentAppointmentDetails.isGroupMeeting);
             document.getElementById("editIsGroupMeeting").checked = isGroupMeeting;
@@ -1329,7 +1329,7 @@
             document.getElementById("appointmentEditForm")?.classList.add("hidden");
         }
 
-        function openCreateModal() {
+        function clickAddAppointment() {
             const modal = document.getElementById("createModal");
             if (!modal) return;
 
@@ -1345,7 +1345,7 @@
             modal.classList.remove("flex");
         }
 
-        function openCreateModalWithTime(cell) {
+        function displayAddAppointmentWindow(cell) {
             const start = cell.dataset.start;
             const end = cell.dataset.end;
 
@@ -1360,10 +1360,10 @@
                 endInput.value = end;
             }
 
-            openCreateModal();
+            clickAddAppointment();
         }
     
-        function updateCurrentTimeLine() {
+        function updateCalendar() {
             const line = document.getElementById("currentTimeLine");
             if (!line) return;
 
@@ -1390,8 +1390,8 @@
             line.style.top = `${topMetaRowHeight + topPx}px`;
         }
 
-        updateCurrentTimeLine();
-        setInterval(updateCurrentTimeLine, 60000);
+        updateCalendar();
+        setInterval(updateCalendar, 60000);
 
         if (currentUserId) {
             const connection = new signalR.HubConnectionBuilder()
@@ -1544,7 +1544,7 @@
             isDraggingSlot = false;
             document.body.classList.remove("dragging-calendar-slot");
 
-            openCreateModal();
+            clickAddAppointment();
 
             setTimeout(() => {
                 clearSlotSelection();

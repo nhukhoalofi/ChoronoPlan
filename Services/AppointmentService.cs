@@ -14,7 +14,7 @@ public class AppointmentService : IAppointmentService
         _db = db;
     }
 
-    public async Task<AppointmentServiceResult> CreateAppointmentAsync(
+    public async Task<AppointmentServiceResult> addAppointmentAsync(
         string userId,
         AppointmentCreateViewModel model)
     {
@@ -35,7 +35,7 @@ public class AppointmentService : IAppointmentService
             end = model.NewEndTime.Value;
         }
 
-        var validationError = ValidateAppointmentInput(model.Title, start, end);
+        var validationError = validateInput(model.Title, start, end);
         if (validationError != null)
         {
             return AppointmentServiceResult.Error(validationError);
@@ -49,12 +49,12 @@ public class AppointmentService : IAppointmentService
                 return AppointmentServiceResult.Error("Không tìm thấy group meeting cần tham gia.");
             }
 
-            return await JoinGroupMeetingAsync(appointmentId, userId);
+            return await joinGroupMeetingAsync(appointmentId, userId);
         }
 
         if (model.Choice != "Replace")
         {
-            var matchingMeeting = await FindMatchingGroupMeetingAsync(
+            var matchingMeeting = await findMatchingGroupMeetingAsync(
                 model.Title,
                 start,
                 end,
@@ -84,7 +84,7 @@ public class AppointmentService : IAppointmentService
             }
         }
 
-        var conflict = await FindConflictAsync(userId, start, end);
+        var conflict = await checkConflictAsync(userId, start, end);
 
         if (conflict != null && model.Choice != "Replace")
         {
@@ -114,11 +114,11 @@ public class AppointmentService : IAppointmentService
         }
 
         return model.IsGroupMeeting
-            ? await CreateGroupMeetingAsync(userId, model, calendar.CalendarId, start, end)
-            : await CreatePersonalAppointmentAsync(userId, model, calendar.CalendarId, start, end);
+                ? await createGroupMeetingAsync(userId, model, calendar.CalendarId, start, end)
+                : await createPersonalAppointmentAsync(userId, model, calendar.CalendarId, start, end);
     }
 
-    public async Task<GroupMeeting?> FindMatchingGroupMeetingAsync(
+            public async Task<GroupMeeting?> findMatchingGroupMeetingAsync(
         string title,
         DateTime startTime,
         DateTime endTime,
@@ -134,7 +134,7 @@ public class AppointmentService : IAppointmentService
                 x.EndTime == endTime);
     }
 
-    public async Task<AppointmentServiceResult> CreatePersonalAppointmentAsync(
+    public async Task<AppointmentServiceResult> createPersonalAppointmentAsync(
         string userId,
         AppointmentCreateViewModel model)
     {
@@ -144,10 +144,10 @@ public class AppointmentService : IAppointmentService
             return AppointmentServiceResult.Error("Không tìm thấy calendar của người dùng.");
         }
 
-        return await CreatePersonalAppointmentAsync(userId, model, calendar.CalendarId, model.StartTime, model.EndTime);
+        return await createPersonalAppointmentAsync(userId, model, calendar.CalendarId, model.StartTime, model.EndTime);
     }
 
-    public async Task<AppointmentServiceResult> CreateGroupMeetingAsync(
+    public async Task<AppointmentServiceResult> createGroupMeetingAsync(
         string userId,
         AppointmentCreateViewModel model)
     {
@@ -157,10 +157,10 @@ public class AppointmentService : IAppointmentService
             return AppointmentServiceResult.Error("Không tìm thấy calendar của người dùng.");
         }
 
-        return await CreateGroupMeetingAsync(userId, model, calendar.CalendarId, model.StartTime, model.EndTime);
+        return await createGroupMeetingAsync(userId, model, calendar.CalendarId, model.StartTime, model.EndTime);
     }
 
-    public async Task<AppointmentServiceResult> JoinGroupMeetingAsync(string appointmentId, string userId)
+    public async Task<AppointmentServiceResult> joinGroupMeetingAsync(string appointmentId, string userId)
     {
         var meeting = await _db.GroupMeetings
             .Include(x => x.Participants)
@@ -189,7 +189,7 @@ public class AppointmentService : IAppointmentService
         return AppointmentServiceResult.Success("Joined group meeting successfully.");
     }
 
-    public async Task<AppointmentDetailsViewModel?> GetAppointmentDetailsAsync(string appointmentId, string userId)
+    public async Task<AppointmentDetailsViewModel?> getAppointmentDetailsAsync(string appointmentId, string userId)
     {
         var appointment = await _db.Appointments
             .Include(x => x.Calendar)
@@ -256,7 +256,7 @@ public class AppointmentService : IAppointmentService
         };
     }
 
-    public async Task<AppointmentServiceResult> UpdateAppointmentAsync(
+    public async Task<AppointmentServiceResult> updateAppointmentAsync(
         string appointmentId,
         string userId,
         AppointmentCreateViewModel model)
@@ -276,13 +276,13 @@ public class AppointmentService : IAppointmentService
             return AppointmentServiceResult.Error("Bạn không có quyền chỉnh sửa appointment này.");
         }
 
-        var validationError = ValidateAppointmentInput(model.Title, model.StartTime, model.EndTime);
+        var validationError = validateInput(model.Title, model.StartTime, model.EndTime);
         if (validationError != null)
         {
             return AppointmentServiceResult.Error(validationError);
         }
 
-        var conflict = await FindConflictAsync(userId, model.StartTime, model.EndTime, appointmentId);
+        var conflict = await checkConflictAsync(userId, model.StartTime, model.EndTime, appointmentId);
         if (conflict != null)
         {
             return new AppointmentServiceResult
@@ -303,7 +303,7 @@ public class AppointmentService : IAppointmentService
 
         if (currentIsGroupMeeting)
         {
-            var matchingMeeting = await FindMatchingGroupMeetingAsync(
+            var matchingMeeting = await findMatchingGroupMeetingAsync(
                 model.Title,
                 model.StartTime,
                 model.EndTime,
@@ -327,7 +327,7 @@ public class AppointmentService : IAppointmentService
         appointment.EndTime = model.EndTime;
 
         _db.Reminders.RemoveRange(appointment.Reminders);
-        AddReminders(appointment, model, model.StartTime);
+        addReminderAsync(appointment, model, model.StartTime);
 
         await _db.SaveChangesAsync();
 
@@ -335,7 +335,7 @@ public class AppointmentService : IAppointmentService
             currentIsGroupMeeting ? "Group meeting updated successfully." : "Appointment updated successfully.");
     }
 
-    private async Task<AppointmentServiceResult> CreatePersonalAppointmentAsync(
+    private async Task<AppointmentServiceResult> createPersonalAppointmentAsync(
         string userId,
         AppointmentCreateViewModel model,
         string calendarId,
@@ -351,7 +351,7 @@ public class AppointmentService : IAppointmentService
             EndTime = end
         };
 
-        AddReminders(appointment, model, start);
+        addReminderAsync(appointment, model, start);
 
         _db.Appointments.Add(appointment);
         await _db.SaveChangesAsync();
@@ -359,7 +359,7 @@ public class AppointmentService : IAppointmentService
         return AppointmentServiceResult.Success("Appointment created successfully.");
     }
 
-    private async Task<AppointmentServiceResult> CreateGroupMeetingAsync(
+    private async Task<AppointmentServiceResult> createGroupMeetingAsync(
         string userId,
         AppointmentCreateViewModel model,
         string calendarId,
@@ -375,7 +375,7 @@ public class AppointmentService : IAppointmentService
             EndTime = end
         };
 
-        AddReminders(meeting, model, start);
+        addReminderAsync(meeting, model, start);
 
         meeting.Participants.Add(new AppointmentParticipant
         {
@@ -390,7 +390,7 @@ public class AppointmentService : IAppointmentService
         return AppointmentServiceResult.Success("Group meeting created successfully.");
     }
 
-    private static void AddReminders(Appointment appointment, AppointmentCreateViewModel model, DateTime start)
+    private static void addReminderAsync(Appointment appointment, AppointmentCreateViewModel model, DateTime start)
     {
         var reminderType = NormalizeReminderType(model.ReminderType);
 
@@ -407,7 +407,7 @@ public class AppointmentService : IAppointmentService
         }
     }
 
-    private static string? ValidateAppointmentInput(string title, DateTime start, DateTime end)
+    private static string? validateInput(string title, DateTime start, DateTime end)
     {
         if (string.IsNullOrWhiteSpace(title))
         {
@@ -427,7 +427,7 @@ public class AppointmentService : IAppointmentService
         return model.GroupMeetingAction == "Join" || model.Choice == "Join";
     }
 
-    private async Task<Appointment?> FindConflictAsync(
+    private async Task<Appointment?> checkConflictAsync(
         string userId,
         DateTime start,
         DateTime end,

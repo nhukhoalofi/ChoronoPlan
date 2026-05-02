@@ -5,30 +5,30 @@ namespace ChronoPlan.Services;
 
 public interface IAppointmentService
 {
-    Task<AppointmentServiceResult> CreateAppointmentAsync(
+    Task<AppointmentServiceResult> addAppointmentAsync(
         string userId,
         AppointmentCreateViewModel model);
 
-    Task<AppointmentServiceResult> JoinGroupMeetingAsync(string appointmentId, string userId);
+    Task<AppointmentServiceResult> joinGroupMeetingAsync(string appointmentId, string userId);
 
-    Task<AppointmentDetailsViewModel?> GetAppointmentDetailsAsync(string appointmentId, string userId);
+    Task<AppointmentDetailsViewModel?> getAppointmentDetailsAsync(string appointmentId, string userId);
 
-    Task<AppointmentServiceResult> UpdateAppointmentAsync(
+    Task<AppointmentServiceResult> updateAppointmentAsync(
         string appointmentId,
         string userId,
         AppointmentCreateViewModel model);
 
-    Task<GroupMeeting?> FindMatchingGroupMeetingAsync(
+    Task<GroupMeeting?> findMatchingGroupMeetingAsync(
         string title,
         DateTime startTime,
         DateTime endTime,
         string userId);
 
-    Task<AppointmentServiceResult> CreatePersonalAppointmentAsync(
+    Task<AppointmentServiceResult> createPersonalAppointmentAsync(
         string userId,
         AppointmentCreateViewModel model);
 
-    Task<AppointmentServiceResult> CreateGroupMeetingAsync(
+    Task<AppointmentServiceResult> createGroupMeetingAsync(
         string userId,
         AppointmentCreateViewModel model);
 }

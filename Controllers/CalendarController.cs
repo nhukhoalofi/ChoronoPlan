@@ -41,8 +41,9 @@ public class CalendarController : Controller
 
 
     [HttpPost]
+    [ActionName("Create")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(AppointmentCreateViewModel form)
+    public async Task<IActionResult> addAppointment(AppointmentCreateViewModel form)
     {
         var userId = GetCurrentUserId();
         if (userId == null)
@@ -50,7 +51,7 @@ public class CalendarController : Controller
             return RedirectToAction("Login", "Auth");
         }
 
-        var result = await _appointmentService.CreateAppointmentAsync(userId, form);
+        var result = await _appointmentService.addAppointmentAsync(userId, form);
 
         if (result.Status == "Success")
         {
@@ -78,8 +79,9 @@ public class CalendarController : Controller
     }
 
     [HttpPost]
+    [ActionName("JoinGroupMeeting")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> JoinGroupMeeting(string appointmentId, DateTime? weekStart)
+    public async Task<IActionResult> joinGroupMeeting(string appointmentId, DateTime? weekStart)
     {
         var userId = GetCurrentUserId();
         if (userId == null)
@@ -87,7 +89,7 @@ public class CalendarController : Controller
             return RedirectToAction("Login", "Auth");
         }
 
-        var result = await _appointmentService.JoinGroupMeetingAsync(appointmentId, userId);
+        var result = await _appointmentService.joinGroupMeetingAsync(appointmentId, userId);
 
         if (result.Status == "Success")
         {
@@ -105,8 +107,9 @@ public class CalendarController : Controller
     }
 
     [HttpPost]
+    [ActionName("EditAppointment")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> EditAppointment(string appointmentId, AppointmentCreateViewModel form)
+    public async Task<IActionResult> editAppointment(string appointmentId, AppointmentCreateViewModel form)
     {
         var userId = GetCurrentUserId();
         if (userId == null)
@@ -114,7 +117,7 @@ public class CalendarController : Controller
             return RedirectToAction("Login", "Auth");
         }
 
-        var result = await _appointmentService.UpdateAppointmentAsync(appointmentId, userId, form);
+        var result = await _appointmentService.updateAppointmentAsync(appointmentId, userId, form);
 
         if (result.Status == "Success")
         {
@@ -132,7 +135,8 @@ public class CalendarController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> AppointmentDetails(string id)
+    [ActionName("AppointmentDetails")]
+    public async Task<IActionResult> getAppointmentDetails(string id)
     {
         var userId = GetCurrentUserId();
         if (userId == null)
@@ -140,7 +144,7 @@ public class CalendarController : Controller
             return Unauthorized();
         }
 
-        var details = await _appointmentService.GetAppointmentDetailsAsync(id, userId);
+        var details = await _appointmentService.getAppointmentDetailsAsync(id, userId);
         if (details == null)
         {
             return NotFound();
