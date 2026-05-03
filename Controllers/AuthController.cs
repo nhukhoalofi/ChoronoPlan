@@ -32,7 +32,7 @@ public class AuthController : Controller
 
         if (user == null)
         {
-            ModelState.AddModelError("", "Email hoặc mật khẩu không đúng, hoặc tài khoản chưa xác thực.");
+            ModelState.AddModelError("", "Email or password is incorrect, or the account is not verified.");
             return View(model);
         }
 
@@ -95,7 +95,7 @@ public class AuthController : Controller
             return View(model);
         }
 
-        TempData["Success"] = "Xác thực thành công. Vui lòng đăng nhập.";
+        TempData["Success"] = "Verification successful. Please log in.";
         return RedirectToAction(nameof(Login));
     }
 
@@ -191,7 +191,7 @@ public class AuthController : Controller
         HttpContext.Session.Remove("ResetVerified");
         HttpContext.Session.Remove("ResetEmail");
 
-        TempData["Success"] = "Đổi mật khẩu thành công. Vui lòng đăng nhập.";
+        TempData["Success"] = "Password changed successfully. Please log in.";
         return RedirectToAction(nameof(Login));
     }
 

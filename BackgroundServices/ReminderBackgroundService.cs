@@ -72,7 +72,7 @@ public class ReminderBackgroundService : BackgroundService
             }
 
             var recipients = await GetRecipientsAsync(db, reminder.Appointment, stoppingToken);
-            var message = reminder.Message ?? $"Nhắc lịch: {reminder.Appointment.Title}";
+            var message = reminder.Message ?? $"Reminder: {reminder.Appointment.Title}";
             var title = reminder.Appointment.Title;
 
             foreach (var recipient in recipients)

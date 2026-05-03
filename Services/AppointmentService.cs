@@ -23,7 +23,7 @@ public class AppointmentService : IAppointmentService
 
         if (calendar == null)
         {
-            return AppointmentServiceResult.Error("Không tìm thấy calendar của người dùng.");
+            return AppointmentServiceResult.Error("User's calendar not found.");
         }
 
         var start = model.StartTime;
@@ -46,7 +46,7 @@ public class AppointmentService : IAppointmentService
             var appointmentId = model.MatchingGroupMeetingAppointmentId ?? model.MatchingMeetingId;
             if (string.IsNullOrWhiteSpace(appointmentId))
             {
-                return AppointmentServiceResult.Error("Không tìm thấy group meeting cần tham gia.");
+                return AppointmentServiceResult.Error("Group meeting to join not found.");
             }
 
             return await joinGroupMeetingAsync(appointmentId, userId);
@@ -91,7 +91,7 @@ public class AppointmentService : IAppointmentService
             return new AppointmentServiceResult
             {
                 Status = "Conflict",
-                Message = "Bạn đã có cuộc hẹn vào thời gian này.",
+                Message = "You already have an appointment at this time.",
                 ConflictAppointment = ToListItem(conflict)
             };
         }
@@ -107,7 +107,7 @@ public class AppointmentService : IAppointmentService
 
             if (ownConflict == null)
             {
-                return AppointmentServiceResult.Error("Bạn chỉ có thể replace cuộc hẹn thuộc calendar của bạn.");
+                return AppointmentServiceResult.Error("You can only replace appointments belonging to your calendar.");
             }
 
             _db.Appointments.Remove(ownConflict);
@@ -141,7 +141,7 @@ public class AppointmentService : IAppointmentService
         var calendar = await _db.Calendars.FirstOrDefaultAsync(x => x.UserId == userId);
         if (calendar == null)
         {
-            return AppointmentServiceResult.Error("Không tìm thấy calendar của người dùng.");
+            return AppointmentServiceResult.Error("User's calendar not found.");
         }
 
         return await createPersonalAppointmentAsync(userId, model, calendar.CalendarId, model.StartTime, model.EndTime);
@@ -168,7 +168,7 @@ public class AppointmentService : IAppointmentService
 
         if (meeting == null)
         {
-            return AppointmentServiceResult.Error("Không tìm thấy group meeting.");
+            return AppointmentServiceResult.Error("Group meeting not found.");
         }
 
         var alreadyJoined = meeting.Participants.Any(x => x.UserId == userId);
@@ -268,12 +268,12 @@ public class AppointmentService : IAppointmentService
 
         if (appointment == null)
         {
-            return AppointmentServiceResult.Error("Không tìm thấy appointment.");
+            return AppointmentServiceResult.Error("Appointment not found.");
         }
 
         if (appointment.Calendar?.UserId != userId)
         {
-            return AppointmentServiceResult.Error("Bạn không có quyền chỉnh sửa appointment này.");
+            return AppointmentServiceResult.Error("You don't have permission to edit this appointment.");
         }
 
         var validationError = validateInput(model.Title, model.StartTime, model.EndTime);
@@ -288,7 +288,7 @@ public class AppointmentService : IAppointmentService
             return new AppointmentServiceResult
             {
                 Status = "Conflict",
-                Message = "Bạn đã có cuộc hẹn vào thời gian này.",
+                Message = "You already have an appointment at this time.",
                 ConflictAppointment = ToListItem(conflict)
             };
         }
@@ -298,7 +298,7 @@ public class AppointmentService : IAppointmentService
 
         if (model.IsGroupMeeting != currentIsGroupMeeting)
         {
-            return AppointmentServiceResult.Error("Không thể đổi loại appointment trong màn hình chỉnh sửa.");
+            return AppointmentServiceResult.Error("Cannot change appointment type in the edit screen.");
         }
 
         if (currentIsGroupMeeting)
@@ -411,12 +411,12 @@ public class AppointmentService : IAppointmentService
     {
         if (string.IsNullOrWhiteSpace(title))
         {
-            return "Tên cuộc hẹn không được để trống.";
+            return "Appointment title must not be empty.";
         }
 
         if (end <= start)
         {
-            return "Thời gian kết thúc phải lớn hơn thời gian bắt đầu.";
+            return "End time must be later than start time.";
         }
 
         return null;

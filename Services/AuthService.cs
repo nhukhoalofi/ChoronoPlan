@@ -34,7 +34,7 @@ public class AuthService : IAuthService
 
         if (!email.EndsWith("@gmail.com"))
         {
-            return (false, "Vui lòng đăng ký bằng tài khoản Gmail.");
+            return (false, "Please register with a Gmail account.");
         }
 
         var existingUser = await _db.Users.FirstOrDefaultAsync(x => x.Email == email);
@@ -42,7 +42,7 @@ public class AuthService : IAuthService
         {
             if (existingUser.IsEmailVerified)
             {
-                return (false, "Email này đã được sử dụng.");
+                return (false, "This email is already in use.");
             }
 
             var resendOtp = GenerateOtp();
@@ -67,10 +67,10 @@ public class AuthService : IAuthService
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Failed to resend registration OTP email to {Email}", email);
-                return (false, "Không gửi được OTP qua Gmail. Vui lòng kiểm tra cấu hình SMTP và thử lại.");
+                return (false, "Failed to send OTP via Gmail. Please check SMTP settings and try again.");
             }
 
-            return (true, "OTP xác thực đã được gửi lại. Vui lòng kiểm tra Gmail.");
+            return (true, "Verification OTP has been resent. Please check Gmail.");
         }
 
         var otp = GenerateOtp();
@@ -116,7 +116,7 @@ public class AuthService : IAuthService
             return (false, "Không gửi được OTP qua Gmail. Vui lòng kiểm tra cấu hình SMTP và thử lại.");
         }
 
-        return (true, "Đăng ký thành công. Vui lòng kiểm tra Gmail để lấy OTP.");
+        return (true, "Registration successful. Please check Gmail for the OTP.");
     }
 
     public async Task<(bool Success, string Message)> VerifyRegistrationOtpAsync(string email, string otp)
@@ -126,22 +126,22 @@ public class AuthService : IAuthService
         var user = await _db.Users.FirstOrDefaultAsync(x => x.Email == email);
         if (user == null)
         {
-            return (false, "Không tìm thấy tài khoản.");
+            return (false, "Account not found.");
         }
 
         if (user.IsEmailVerified)
         {
-            return (true, "Tài khoản đã được xác thực.");
+            return (true, "Account has been verified.");
         }
 
         if (user.RegisterOtpHash == null || user.RegisterOtpExpiresAt == null)
         {
-            return (false, "OTP không tồn tại.");
+            return (false, "OTP does not exist.");
         }
 
         if (DateTime.UtcNow > user.RegisterOtpExpiresAt.Value)
         {
-            return (false, "OTP đã hết hạn.");
+            return (false, "OTP has expired.");
         }
 
         if (!_passwordHasher.Verify(otp, user.RegisterOtpHash))
