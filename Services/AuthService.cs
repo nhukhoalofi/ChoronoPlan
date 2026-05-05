@@ -48,11 +48,12 @@ public class AuthService : IAuthService
             var resendOtp = GenerateOtp();
             var resendOtpMinutes = _configuration.GetValue<int>("AppSettings:OtpMinutes", 10);
 
-            existingUser.Name = model.Name.Trim();
-            existingUser.PhoneNumber = model.PhoneNumber;
-            existingUser.PasswordHash = _passwordHasher.Hash(model.Password);
-            existingUser.RegisterOtpHash = _passwordHasher.Hash(resendOtp);
-            existingUser.RegisterOtpExpiresAt = DateTime.UtcNow.AddMinutes(resendOtpMinutes);
+            existingUser.UpdateRegistrationInfo(
+                model.Name.Trim(),
+                model.PhoneNumber,
+                _passwordHasher.Hash(model.Password),
+                _passwordHasher.Hash(resendOtp),
+                DateTime.UtcNow.AddMinutes(resendOtpMinutes));
 
             await _db.SaveChangesAsync();
 
@@ -76,21 +77,15 @@ public class AuthService : IAuthService
         var otp = GenerateOtp();
         var otpMinutes = _configuration.GetValue<int>("AppSettings:OtpMinutes", 10);
 
-        var user = new User
-        {
-            Name = model.Name.Trim(),
-            Email = email,
-            PhoneNumber = model.PhoneNumber,
-            PasswordHash = _passwordHasher.Hash(model.Password),
-            IsEmailVerified = false,
-            RegisterOtpHash = _passwordHasher.Hash(otp),
-            RegisterOtpExpiresAt = DateTime.UtcNow.AddMinutes(otpMinutes)
-        };
+        var user = User.Create(
+            model.Name.Trim(),
+            email,
+            model.PhoneNumber,
+            _passwordHasher.Hash(model.Password),
+            _passwordHasher.Hash(otp),
+            DateTime.UtcNow.AddMinutes(otpMinutes));
 
-        var calendar = new Calendar
-        {
-            UserId = user.UserId
-        };
+        var calendar = Calendar.Create(user.UserId);
 
         _db.Users.Add(user);
         _db.Calendars.Add(calendar);
@@ -149,9 +144,7 @@ public class AuthService : IAuthService
             return (false, "OTP không đúng.");
         }
 
-        user.IsEmailVerified = true;
-        user.RegisterOtpHash = null;
-        user.RegisterOtpExpiresAt = null;
+        user.VerifyEmail();
 
         await _db.SaveChangesAsync();
 
@@ -195,8 +188,7 @@ public class AuthService : IAuthService
         var otp = GenerateOtp();
         var otpMinutes = _configuration.GetValue<int>("AppSettings:OtpMinutes", 10);
 
-        user.ResetOtpHash = _passwordHasher.Hash(otp);
-        user.ResetOtpExpiresAt = DateTime.UtcNow.AddMinutes(otpMinutes);
+        user.SetResetOtp(_passwordHasher.Hash(otp), DateTime.UtcNow.AddMinutes(otpMinutes));
 
         await _db.SaveChangesAsync();
 
@@ -245,9 +237,7 @@ public class AuthService : IAuthService
             return (false, "Không tìm thấy tài khoản.");
         }
 
-        user.PasswordHash = _passwordHasher.Hash(newPassword);
-        user.ResetOtpHash = null;
-        user.ResetOtpExpiresAt = null;
+        user.ResetPassword(_passwordHasher.Hash(newPassword));
 
         await _db.SaveChangesAsync();
 

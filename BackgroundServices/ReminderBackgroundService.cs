@@ -66,8 +66,7 @@ public class ReminderBackgroundService : BackgroundService
         {
             if (reminder.Appointment == null)
             {
-                reminder.IsSent = true;
-                reminder.SentAt = now;
+                reminder.MarkAsSent(now);
                 continue;
             }
 
@@ -77,16 +76,13 @@ public class ReminderBackgroundService : BackgroundService
 
             foreach (var recipient in recipients)
             {
-                var notification = new Notification
-                {
-                    UserId = recipient.UserId,
-                    AppointmentId = reminder.Appointment.AppointmentId,
-                    ReminderId = reminder.ReminderId,
-                    Title = title,
-                    Message = message,
-                    CreatedAt = now,
-                    IsRead = false
-                };
+                var notification = Notification.Create(
+                    recipient.UserId,
+                    reminder.Appointment.AppointmentId,
+                    reminder.ReminderId,
+                    title,
+                    message,
+                    now);
 
                 db.Notifications.Add(notification);
 
@@ -114,8 +110,7 @@ public class ReminderBackgroundService : BackgroundService
                 });
             }
 
-            reminder.IsSent = true;
-            reminder.SentAt = now;
+            reminder.MarkAsSent(now);
         }
 
         await db.SaveChangesAsync(stoppingToken);

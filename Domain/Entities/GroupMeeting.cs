@@ -2,8 +2,22 @@
 
 public class GroupMeeting : Appointment
 {
-    public ICollection<AppointmentParticipant> Participants { get; set; }
+    public ICollection<AppointmentParticipant> Participants { get; private set; }
         = new List<AppointmentParticipant>();
+
+    public new static GroupMeeting Create(
+        string calendarId,
+        string title,
+        string? location,
+        DateTime startTime,
+        DateTime endTime)
+    {
+        var meeting = new GroupMeeting();
+        meeting.CalendarId = calendarId;
+        meeting.UpdateDetails(title, location, startTime, endTime);
+
+        return meeting;
+    }
 
     public bool IsMatch(string title, TimeSpan duration)
     {
@@ -18,11 +32,6 @@ public class GroupMeeting : Appointment
             return;
         }
 
-        Participants.Add(new AppointmentParticipant
-        {
-            AppointmentId = AppointmentId,
-            UserId = user.UserId,
-            JoinedAt = DateTime.UtcNow
-        });
+        Participants.Add(AppointmentParticipant.Create(AppointmentId, user.UserId));
     }
 }

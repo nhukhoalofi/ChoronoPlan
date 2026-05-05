@@ -47,7 +47,7 @@ public class NotificationService : INotificationService
             return;
         }
 
-        notification.IsRead = true;
+        notification.MarkAsRead();
         await _db.SaveChangesAsync();
     }
 }

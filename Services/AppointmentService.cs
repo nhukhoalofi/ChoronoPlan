@@ -177,12 +177,8 @@ public class AppointmentService : IAppointmentService
             return AppointmentServiceResult.Success("You have already joined this group meeting.");
         }
 
-        meeting.Participants.Add(new AppointmentParticipant
-        {
-            AppointmentId = meeting.AppointmentId,
-            UserId = userId,
-            JoinedAt = DateTime.Now
-        });
+        var user = await _db.Users.FirstAsync(x => x.UserId == userId);
+        meeting.AddParticipant(user);
 
         await _db.SaveChangesAsync();
 
@@ -321,12 +317,14 @@ public class AppointmentService : IAppointmentService
             }
         }
 
-        appointment.Title = model.Title.Trim();
-        appointment.Location = model.Location?.Trim();
-        appointment.StartTime = model.StartTime;
-        appointment.EndTime = model.EndTime;
+        appointment.UpdateDetails(
+            model.Title.Trim(),
+            model.Location?.Trim(),
+            model.StartTime,
+            model.EndTime);
 
         _db.Reminders.RemoveRange(appointment.Reminders);
+        appointment.ClearReminders();
         addReminderAsync(appointment, model, model.StartTime);
 
         await _db.SaveChangesAsync();
@@ -342,14 +340,12 @@ public class AppointmentService : IAppointmentService
         DateTime start,
         DateTime end)
     {
-        var appointment = new Appointment
-        {
-            CalendarId = calendarId,
-            Title = model.Title.Trim(),
-            Location = model.Location?.Trim(),
-            StartTime = start,
-            EndTime = end
-        };
+        var appointment = Appointment.Create(
+            calendarId,
+            model.Title.Trim(),
+            model.Location?.Trim(),
+            start,
+            end);
 
         addReminderAsync(appointment, model, start);
 
@@ -366,23 +362,17 @@ public class AppointmentService : IAppointmentService
         DateTime start,
         DateTime end)
     {
-        var meeting = new GroupMeeting
-        {
-            CalendarId = calendarId,
-            Title = model.Title.Trim(),
-            Location = model.Location?.Trim(),
-            StartTime = start,
-            EndTime = end
-        };
+        var meeting = GroupMeeting.Create(
+            calendarId,
+            model.Title.Trim(),
+            model.Location?.Trim(),
+            start,
+            end);
 
         addReminderAsync(meeting, model, start);
 
-        meeting.Participants.Add(new AppointmentParticipant
-        {
-            AppointmentId = meeting.AppointmentId,
-            UserId = userId,
-            JoinedAt = DateTime.Now
-        });
+        var user = await _db.Users.FirstAsync(x => x.UserId == userId);
+        meeting.AddParticipant(user);
 
         _db.GroupMeetings.Add(meeting);
         await _db.SaveChangesAsync();
@@ -396,14 +386,11 @@ public class AppointmentService : IAppointmentService
 
         foreach (var minutes in model.ReminderMinutesBefore.Distinct().Where(x => x > 0))
         {
-            appointment.Reminders.Add(new Reminder
-            {
-                ReminderTime = start.AddMinutes(-minutes),
-                Type = reminderType,
-                Message = $"Reminder for {model.Title}",
-                IsCanceled = false,
-                IsSent = false
-            });
+            appointment.AddReminder(Reminder.Create(
+                appointment.AppointmentId,
+                start.AddMinutes(-minutes),
+                reminderType,
+                $"Reminder for {model.Title}"));
         }
     }
 
