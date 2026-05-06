@@ -333,6 +333,34 @@ public class AppointmentService : IAppointmentService
             currentIsGroupMeeting ? "Group meeting updated successfully." : "Appointment updated successfully.");
     }
 
+    public async Task<AppointmentServiceResult> deleteAppointmentAsync(string appointmentId, string userId)
+    {
+        var appointment = await _db.Appointments
+            .Include(x => x.Calendar)
+            .Include(x => x.Reminders)
+            .FirstOrDefaultAsync(x => x.AppointmentId == appointmentId);
+
+        if (appointment == null)
+        {
+            return AppointmentServiceResult.Error("Appointment not found.");
+        }
+
+        if (appointment.Calendar?.UserId != userId)
+        {
+            return AppointmentServiceResult.Error("You don't have permission to delete this appointment.");
+        }
+
+        if (appointment.Reminders.Any())
+        {
+            _db.Reminders.RemoveRange(appointment.Reminders);
+        }
+
+        _db.Appointments.Remove(appointment);
+        await _db.SaveChangesAsync();
+
+        return AppointmentServiceResult.Success("Appointment deleted successfully.");
+    }
+
     private async Task<AppointmentServiceResult> createPersonalAppointmentAsync(
         string userId,
         AppointmentCreateViewModel model,

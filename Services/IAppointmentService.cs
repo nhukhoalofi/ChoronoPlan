@@ -18,6 +18,8 @@ public interface IAppointmentService
         string userId,
         AppointmentCreateViewModel model);
 
+    Task<AppointmentServiceResult> deleteAppointmentAsync(string appointmentId, string userId);
+
     Task<GroupMeeting?> findMatchingGroupMeetingAsync(
         string title,
         DateTime startTime,

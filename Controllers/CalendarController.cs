@@ -134,6 +134,34 @@ public class CalendarController : Controller
         });
     }
 
+    [HttpPost]
+    [ActionName("DeleteAppointment")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> deleteAppointment(string appointmentId, DateTime? weekStart)
+    {
+        var userId = GetCurrentUserId();
+        if (userId == null)
+        {
+            return RedirectToAction("Login", "Auth");
+        }
+
+        var result = await _appointmentService.deleteAppointmentAsync(appointmentId, userId);
+
+        if (result.Status == "Success")
+        {
+            TempData["Success"] = result.Message;
+        }
+        else
+        {
+            TempData["Error"] = result.Message;
+        }
+
+        return RedirectToAction(nameof(Index), new
+        {
+            weekStart = NormalizeWeekStart(weekStart ?? DateTime.Today).ToString("yyyy-MM-dd")
+        });
+    }
+
     [HttpGet]
     [ActionName("AppointmentDetails")]
     public async Task<IActionResult> getAppointmentDetails(string id)

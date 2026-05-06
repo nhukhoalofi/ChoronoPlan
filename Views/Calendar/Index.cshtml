@@ -301,24 +301,6 @@
             </div>
         </div>
 
-        <form asp-controller="Calendar" asp-action="Index" method="get" class="flex-1 max-w-2xl px-8">
-            <input type="hidden" name="weekStart" value="@Model.WeekStart.ToString("yyyy-MM-dd")" />
-            <input type="hidden" name="selectedDate" value="@selectedDate.ToString("yyyy-MM-dd")" />
-            <input type="hidden" name="viewMode" value="@currentMode" />
-
-            <div class="relative group">
-                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">
-                    search
-                </span>
-
-                <input name="q"
-                       value="@Model.SearchQuery"
-                       class="w-full bg-[#f8fafc] border border-[#e5e7eb] rounded-lg py-2.5 pl-10 pr-4 text-[#111827] placeholder:text-[#6b7280] focus:ring-2 focus:ring-primary-container focus:border-primary-container"
-                       placeholder="Search"
-                       type="text" />
-            </div>
-        </form>
-
         <div class="flex items-center gap-2">
             <div class="relative">
                 <button id="notificationButton"
@@ -481,12 +463,6 @@
                     </div>
                 </div>
 
-                <div class="mt-auto pt-4 border-t border-[#e5e7eb] mx-4 mb-4">
-                    <div class="flex items-center gap-3 px-2 py-2 text-[#4b5563] hover:text-[#111827] hover:bg-[#f3f4f6] rounded-lg transition-all duration-200 cursor-pointer">
-                        <span class="material-symbols-outlined">settings</span>
-                        <span>Settings</span>
-                    </div>
-                </div>
             </nav>
         </aside>
 
@@ -968,6 +944,13 @@
                         <span class="material-symbols-outlined">edit_square</span>
                     </button>
 
+                    <button id="appointmentDetailsDeleteButton"
+                            type="button"
+                            onclick="deleteCurrentAppointment()"
+                            class="p-2 rounded-full text-red-600 hover:text-red-700 hover:bg-red-50 transition-colors">
+                        <span class="material-symbols-outlined">delete</span>
+                    </button>
+
                     <button type="button"
                             onclick="closeAppointmentDetails()"
                             class="p-2 rounded-full text-on-surface-variant hover:text-on-surface hover:bg-surface-variant transition-colors">
@@ -1250,6 +1233,7 @@
             document.getElementById("appointmentDetailsEnd").textContent = showSuccess(details.endTime);
             document.getElementById("appointmentDetailsLocation").textContent = details.location || "No location";
             document.getElementById("appointmentDetailsEditButton")?.classList.toggle("hidden", !details.canEdit);
+            document.getElementById("appointmentDetailsDeleteButton")?.classList.toggle("hidden", !details.canEdit);
 
             const badge = document.getElementById("appointmentDetailsGroupBadge");
             const section = document.getElementById("appointmentDetailsParticipantsSection");
@@ -1327,6 +1311,41 @@
         function hideAppointmentEditForm() {
             document.getElementById("appointmentDetailsView")?.classList.remove("hidden");
             document.getElementById("appointmentEditForm")?.classList.add("hidden");
+        }
+
+        function deleteCurrentAppointment() {
+            if (!currentAppointmentDetails?.canEdit || !currentAppointmentDetails?.appointmentId) return;
+
+            const confirmed = window.confirm("Delete this appointment? This action cannot be undone.");
+            if (!confirmed) return;
+
+            const form = document.createElement("form");
+            form.method = "post";
+            form.action = "/Calendar/DeleteAppointment";
+
+            const token = document.querySelector("input[name='__RequestVerificationToken']")?.value;
+            if (token) {
+                const tokenInput = document.createElement("input");
+                tokenInput.type = "hidden";
+                tokenInput.name = "__RequestVerificationToken";
+                tokenInput.value = token;
+                form.appendChild(tokenInput);
+            }
+
+            const appointmentInput = document.createElement("input");
+            appointmentInput.type = "hidden";
+            appointmentInput.name = "appointmentId";
+            appointmentInput.value = currentAppointmentDetails.appointmentId;
+            form.appendChild(appointmentInput);
+
+            const weekStartInput = document.createElement("input");
+            weekStartInput.type = "hidden";
+            weekStartInput.name = "weekStart";
+            weekStartInput.value = "@Model.WeekStart.ToString("yyyy-MM-dd")";
+            form.appendChild(weekStartInput);
+
+            document.body.appendChild(form);
+            form.submit();
         }
 
         function clickAddAppointment() {
